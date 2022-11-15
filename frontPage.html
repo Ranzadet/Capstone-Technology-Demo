@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Enter info:</h1>
+    <div id="info">
+        <input type="text" placeholder="Name for video" required="required">
+        <input type="text" placeholder="Tags for video, entered as a comma seperated list"required="required">
+        <input type="text" placeholder="Database Host" required="required">
+        <input type="text" placeholder="Database Link" required="required">
+        <input type="text" placeholder="Database Username" required="required">
+        <input type="text" placeholder="Database Password" required="required">
+
+        <p></p>
+
+        <form action="fileUpload.js"> <!-- might need to be php file-->
+                <input type="file" accept=".mp4, .mov, .webm, .wmv, .avi">
+                <input type="submit">
+        </form>
+        
+    </div>
+        
+
+</body>
+</html>
