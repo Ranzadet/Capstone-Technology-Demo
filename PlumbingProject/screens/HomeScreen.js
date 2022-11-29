@@ -15,6 +15,10 @@ const HomeScreen = () => {
             .catch(error => alert(error.message))
     }
 
+    // const toFileUpload = () => {
+    //     navigation.navigate("File Upload").catch(error => alert(error.message))
+    // }
+
     return (
         <View style={styles.container}>
             <Text>Email: {auth.currentUser?.email}</Text>
@@ -23,6 +27,12 @@ const HomeScreen = () => {
                 style={styles.button}
             >
                 <Text style={styles.buttonText}>Sign out</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => {navigation.navigate("FileUpload")}}
+                style={styles.button}
+            >
+                <Text style={styles.buttonText}>Upload files</Text>
             </TouchableOpacity>
         </View>
     )

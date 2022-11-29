@@ -1,15 +1,15 @@
+import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Container } from 'react-native';
 import React from "react"
 import DocumentPicker from "react-native-document-picker"
-import {Icon, List, ListItem, Text} from "native-base"
 
-const FileUpload = (props) => {
+const FileUpload = () => {
+    const navigation = useNavigation()
+    
     return (
-        <Container>
-            
-        </Container>
-    );
-};
+        <Text>test</Text>
+    )
+}
 
 export default FileUpload
