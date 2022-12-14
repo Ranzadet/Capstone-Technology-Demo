@@ -29,7 +29,7 @@ const HomeScreen = () => {
                 <Text style={styles.buttonText}>Sign out</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                onPress={() => {navigation.navigate("FileUpload")}}
+                onPress={() => {navigation.navigate("UploadScreen")}}
                 style={styles.button}
             >
                 <Text style={styles.buttonText}>Upload files</Text>
