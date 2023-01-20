@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image } 
 import React, { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { firebase } from '../config'
-
+``
 const UploadScreen = () => {
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
@@ -11,7 +11,7 @@ const UploadScreen = () => {
         // No permissions request is necessary for launching the image library
         let result = await ImagePicker.launchImageLibraryAsync({
             mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
+            allowsEditing: false,
             aspect: [4, 3],
             quality: 1
         });
