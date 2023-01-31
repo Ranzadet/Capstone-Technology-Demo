@@ -40,7 +40,7 @@ const UploadScreen = () => {
             longitude = -longitude;
         
         console.log(assets)
-        console.log("RELEVENT METADATA: ")
+        console.log("RELEVANT METADATA: ")
         // console.log(duration)
         // console.log(fileExtension)
         // console.log(date)
