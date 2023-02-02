@@ -7,7 +7,7 @@ import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 ``
 
-const UploadScreen = () => {
+const UploadScreenMetadata = () => {
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [metadata, setMetadata] = useState({})
@@ -129,7 +129,7 @@ const UploadScreen = () => {
     )
 }
 
-export default UploadScreen;
+export default UploadScreenMetadata;
 
 const styles = StyleSheet.create({
     container: {

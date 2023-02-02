@@ -6,7 +6,8 @@ import LoginScreen from './screens/LoginScreen'
 import HomeScreen from './screens/HomeScreen'
 import FileUpload from './screens/FileUpload'
 import FileUpload2 from './screens/FileUpload2'
-import UploadScreen from './screens/UploadScreen'
+import UploadScreenMetadata from './screens/UploadScreenMetadata'
+import UploadScreenManual from './screens/UploadScreenManual'
 const Stack = createNativeStackNavigator();
 
 // export default function App() {
@@ -27,7 +28,8 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="FileUpload" component={FileUpload} />
         <Stack.Screen name="FileUpload2" component={FileUpload2} />
-        <Stack.Screen name="UploadScreen" component={UploadScreen} />
+        <Stack.Screen name="UploadScreenMetadata" component={UploadScreenMetadata} />
+        <Stack.Screen name="UploadScreenManual" component={UploadScreenManual} />
       </Stack.Navigator>
     </NavigationContainer>
   );

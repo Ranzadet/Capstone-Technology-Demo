@@ -29,10 +29,16 @@ const HomeScreen = () => {
                 <Text style={styles.buttonText}>Sign out</Text>
             </TouchableOpacity>
             <TouchableOpacity
-                onPress={() => {navigation.navigate("UploadScreen")}}
+                onPress={() => {navigation.navigate("UploadScreenMetadata")}}
                 style={styles.button}
             >
-                <Text style={styles.buttonText}>Upload files</Text>
+                <Text style={styles.buttonText}>Upload files w/ metadata</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => {navigation.navigate("UploadScreenManual")}}
+                style={styles.button}
+            >
+                <Text style={styles.buttonText}>Upload files w/ manual data</Text>
             </TouchableOpacity>
         </View>
     )
