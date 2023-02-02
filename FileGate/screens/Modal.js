@@ -3,7 +3,7 @@ import {Button, View, StyleSheet} from 'react-native';
 import Modal from 'react-native-modal';
 import LoginScreen from './LoginScreen';
 
-const Modal = () => {
+const ModalD = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
@@ -16,7 +16,7 @@ const Modal = () => {
         animationOut={'slideOutUp'}
         isVisible={isModalVisible}>
         <View>
-          <LoginForm />
+          <LoginScreen />
           <View style={{marginTop: 150}}>
             <Button title="Hide modal" onPress={toggleModal} />
           </View>
@@ -33,4 +33,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
-export default Modal;
+export default ModalD;
