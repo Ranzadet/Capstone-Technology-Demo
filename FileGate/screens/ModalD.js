@@ -71,7 +71,7 @@ return (
                     onPress={handleLogin}
                     style={styles.button1}
                 >
-                    <Text style={styles.buttonText}>Login</Text>
+                    <Text style={styles.textStyle}>Login</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
