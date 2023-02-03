@@ -71,7 +71,7 @@ return (
                     onPress={handleLogin}
                     style={styles.button1}
                 >
-                    <Text style={styles.textStyle}>Login</Text>
+                    <Text style={styles.buttonText}>Login</Text>
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
@@ -124,7 +124,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
-  },
+  },    
+  textStyle1: {
+    color: 'black',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },              
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
@@ -136,6 +141,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 5,
 },
+buttonText: {
+  color: 'black',
+  fontWeight: '700',
+  fontSize: 16,
+}
   
 });
 
