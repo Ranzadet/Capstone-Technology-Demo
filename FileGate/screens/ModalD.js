@@ -1,7 +1,6 @@
-import {Alert, Modal, StyleSheet, Text, Pressable, View} from 'react-native';
+import {Alert, Modal, StyleSheet, Text, Pressable, View, KeyboardAvoidingView, TextInput, TouchableOpacity} from 'react-native';
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { auth } from '../firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 
