@@ -119,6 +119,27 @@ const UploadScreenManual = () => {
 
     const datetimeChanged = (event, datetimeChoice) => {
         console.log(datetimeChoice);
+        setDate(datetimeChoice);
+    }
+
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!  
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+               !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+    }
+
+    const latitudeChanged = (text) => {
+        if (isNumeric(text)) {
+            setLatitude(Number(text));
+            console.log(latitude);
+        }
+    }
+
+    const longitudeChanged = (text) => {
+        if (isNumeric(text)) {
+            setLongitude(Number(text));
+            console.log(longitude);
+        }
     }
     
     return (
@@ -140,17 +161,17 @@ const UploadScreenManual = () => {
                 <TextInput
                     placeholder="Latitude"
                     value={latitude}
-                    onChangeText={text => setLatitude(text)}
+                    onChangeText={latitudeChanged}
                     style={styles.input}
                 />
                 <TextInput
                     placeholder="Longitude"
                     value={longitude}
-                    onChangeText={text => setLongitude(text)}
+                    onChangeText={longitudeChanged}
                     style={styles.input}
                 />
-            </View>
-            <View>
+            {/* </View>
+            <View> */}
                 <RNDateTimePicker 
                     value={date}
                     mode="datetime"
