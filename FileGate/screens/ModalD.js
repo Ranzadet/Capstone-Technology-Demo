@@ -41,6 +41,11 @@ return (
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
+          <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}>
+              <Text style={styles.textStyle}>Hide Modal</Text>
+            </Pressable>
         <KeyboardAvoidingView
             style={styles.container}
             behavior="padding"
