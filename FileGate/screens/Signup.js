@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import FormButton from './screens/FormButton';
-import FormInput from './screens/FormInput';
+import FormButton from 'FormButton';
+import FormInput from 'FormInput';
 export default function SignupScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
