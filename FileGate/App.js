@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen'
 import HomeScreen from './screens/HomeScreen'
+import Signup from './screens/Signup'
 // import FileUpload from './screens/FileUpload'
 // import FileUpload2 from './screens/FileUpload2'
 import UploadScreen from './screens/UploadScreen'
@@ -24,7 +25,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        
+        <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen name="ModalD" component={ModalD} />
         <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
