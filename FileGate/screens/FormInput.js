@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
-import { windowHeight, windowWidth } from '../utils/Dimensions';
+import { windowHeight, windowWidth } from './Dimensions';
 export default function FormInput({ labelValue, placeholderText, ...rest }) {
   return (
     <TextInput

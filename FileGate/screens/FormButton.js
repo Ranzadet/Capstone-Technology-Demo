@@ -1,3 +1,6 @@
+import React from 'react';
+import { StyleSheet, TextInput } from 'react-native';
+import { windowHeight, windowWidth } from './Dimensions';
 export default function FormButton({ buttonTitle, ...rest }) {
     return (
       <TouchableOpacity style={styles.buttonContainer} {...rest}>
