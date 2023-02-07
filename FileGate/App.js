@@ -4,6 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen'
 import HomeScreen from './screens/HomeScreen'
+import { AuthProvider } from './AuthProvider';
+
 // import FileUpload from './screens/FileUpload'
 // import FileUpload2 from './screens/FileUpload2'
 import UploadScreen from './screens/UploadScreen'
@@ -22,7 +24,9 @@ const Stack = createNativeStackNavigator();
 // }
 
 export default function App() {
-  return (
+  return
+  <Providers />; 
+  (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Signup" component={SignupScreen}/>
