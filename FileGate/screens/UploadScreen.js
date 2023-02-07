@@ -5,6 +5,8 @@ import { firebase } from '../config'
 import {doc, setDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
+import {userinfo} from './LoginScreen'
+
 ``
 
 const UploadScreen = () => {
@@ -27,6 +29,8 @@ const UploadScreen = () => {
         //console.log(result.assets);
 
         /* METADATA */
+        console.log("Userid: ", userinfo.userID);
+        console.log("Email: ", userinfo.email);
         const assets = result.assets[0]
         const duration = assets.duration
         let filExIndex = assets.uri.search(/\..../);
@@ -34,9 +38,13 @@ const UploadScreen = () => {
         const date = assets.exif.DateTimeOriginal;
         const uploadtime = new Date().toDateString();
         const size = assets.fileSize;
-        const latitude = assets.exif.GPSLatitude;
+        let latitude = assets.exif.GPSLatitude;
+        const latitudeSign = assets.exif.GPSLatitudeRef;
+        if (latitudeSign == 'S')
+            latitude = -latitude;
         let longitude = assets.exif.GPSLongitude;
-        if (longitude > 0)
+        const longitudeSign = assets.exif.GPSLongitudeRef;
+        if (longitudeSign == 'W')
             longitude = -longitude;
         
         console.log(assets)
@@ -59,7 +67,8 @@ const UploadScreen = () => {
         // metadata.longitude = longitude;
         setMetadata({duration: duration, fileExtension:fileExtension, date:date, latitude:latitude, longitude:longitude, size:size});
         setUploadTime(uploadtime);
-        setUploader("");
+        setUploader(userinfo.userID);
+        console.log("New uploader: ", uploader)
         setFilepath(assets.uri);
 
         function delay(time) {
@@ -94,6 +103,8 @@ const UploadScreen = () => {
             console.log(e);
         }
         try{
+            console.log(metadata);
+            console.log(filepath);
             const mseconds = String(Date.now());
             const name = String(uploadTime + "_" + mseconds);
             await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 

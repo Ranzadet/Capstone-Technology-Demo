@@ -4,9 +4,17 @@ import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, Vi
 import { auth } from '../firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 
+class userinfo {
+    userinfo(){
+        userID = ""; 
+        email = "";
+    }
+}
+
 const LoginScreen = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [userID, setuserID] = useState('');
 
     const navigation = useNavigation()
 
@@ -24,7 +32,11 @@ const LoginScreen = () => {
         signInWithEmailAndPassword(auth, email, password)
             .then(userCredentials => {
                 const user = userCredentials.user;
-                console.log("Logged in with: ", user.email)
+                setuserID(user.uid);
+                userinfo.userID = user.uid;
+                userinfo.email = email;
+                //console.log("User id: ", user.uid);
+                console.log("Logged in with: ", user.email);
             })
             .catch(error => alert(error.message))
     }
@@ -63,6 +75,7 @@ const LoginScreen = () => {
 }
 
 export default LoginScreen
+export {userinfo}
 
 const styles = StyleSheet.create({
     container: {

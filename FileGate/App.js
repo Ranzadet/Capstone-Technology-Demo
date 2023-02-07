@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen'
+import {userinfo} from './screens/LoginScreen'
 import HomeScreen from './screens/HomeScreen'
 import FileUpload from './screens/FileUpload'
 import FileUpload2 from './screens/FileUpload2'
@@ -18,6 +19,7 @@ const Stack = createNativeStackNavigator();
 //     </View>
 //   );
 // }
+
 
 export default function App() {
   return (
