@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import FormButton from './FormButton';
 import FormInput from './FormInput';
-import { AuthContext } from './AuthProvider';
+import { AuthContext } from './AuthProv';
 
 export default function SignupScreen({navigation}) {
   const [email, setEmail] = useState('');
