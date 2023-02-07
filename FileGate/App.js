@@ -22,9 +22,9 @@ const Stack = createNativeStackNavigator();
 // }
 
 export default function App() {
-  return
+  return (
   // <Providers />; 
-  (
+  
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Signup" component={SignupScreen}/>

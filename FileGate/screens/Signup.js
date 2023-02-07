@@ -9,17 +9,10 @@ export default function SignupScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const { register } = useContext(AuthContext);
-  const handleLogin = () => {
-    signInWithEmailAndPassword(auth, email, password)
-        .then(userCredentials => {
-            const user = userCredentials.user;
-            console.log("Logged in with: ", user.email)
-        })
-        .catch(error => alert(error.message))
-}
   const handleSignup = () => {
-    createUserWithEmailAndPassword(email,password)
-}
+    auth().createUserWithEmailAndPassword(email,password)
+    .catch(error => alert(error.message))
+    }
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Create an account</Text>
