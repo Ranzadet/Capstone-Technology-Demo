@@ -4,15 +4,18 @@ import FormButton from './FormButton';
 import FormInput from './FormInput';
 // import { AuthContext } from './AuthProv';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase'
 
 export default function SignupScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  // const auth = getAuth();
+
   // const { register } = useContext(AuthContext);
   const handleSignup = () => {
-    auth().createUserWithEmailAndPassword(email,password)
-    .catch(error => alert(error.message))
-    }
+    createUserWithEmailAndPassword(auth,email,password)
+  .catch(error => alert(error.message))
+}
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Create an account</Text>
