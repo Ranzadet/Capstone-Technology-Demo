@@ -5,8 +5,10 @@ import FormInput from './FormInput';
 // import { AuthContext } from './AuthProv';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase'
+import { useNavigation } from '@react-navigation/native'
 
 export default function SignupScreen({navigation}) {
+  const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   // const auth = getAuth();
@@ -14,7 +16,10 @@ export default function SignupScreen({navigation}) {
   // const { register } = useContext(AuthContext);
   const handleSignup = () => {
     createUserWithEmailAndPassword(auth,email,password)
-  .catch(error => alert(error.message))
+    .then(() => {
+      navigation.replace("Login")
+    })
+    .catch(error => alert(error.message))
 }
   return (
     <View style={styles.container}>
