@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image, TextInput, Button } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { firebase } from '../config'
 import {doc, setDoc} from 'firebase/firestore'
@@ -7,6 +7,7 @@ import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 import datetimepicker from '@react-native-community/datetimepicker'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
+// import { get } from 'jquery'
 ``
 
 const UploadScreenManual = () => {

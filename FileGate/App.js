@@ -8,6 +8,7 @@ import FileUpload from './screens/FileUpload'
 import FileUpload2 from './screens/FileUpload2'
 import UploadScreenMetadata from './screens/UploadScreenMetadata'
 import UploadScreenManual from './screens/UploadScreenManual'
+import TestWeatherScreen from './screens/TestWeatherScreen';
 const Stack = createNativeStackNavigator();
 
 // export default function App() {
@@ -30,6 +31,7 @@ export default function App() {
         <Stack.Screen name="FileUpload2" component={FileUpload2} />
         <Stack.Screen name="UploadScreenMetadata" component={UploadScreenMetadata} />
         <Stack.Screen name="UploadScreenManual" component={UploadScreenManual} />
+        <Stack.Screen name="TestWeatherScreen" component={TestWeatherScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
