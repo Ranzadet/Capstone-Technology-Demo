@@ -16,6 +16,7 @@ const UploadScreen = () => {
     const [uploadTime, setUploadTime] = useState('')
     const [uploader, setUploader] = useState('')
     const [filepath, setFilepath] = useState('')
+    const [userPass, setUserPass] = useState('')
 
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
@@ -31,6 +32,7 @@ const UploadScreen = () => {
         /* METADATA */
         console.log("Userid: ", userinfo.userID);
         console.log("Email: ", userinfo.email);
+        console.log("Password: ", userinfo.password);
         const assets = result.assets[0]
         const duration = assets.duration
         let filExIndex = assets.uri.search(/\..../);
@@ -68,6 +70,7 @@ const UploadScreen = () => {
         setMetadata({duration: duration, fileExtension:fileExtension, date:date, latitude:latitude, longitude:longitude, size:size});
         setUploadTime(uploadtime);
         setUploader(userinfo.userID);
+        setUserPass(userinfo.password);
         console.log("New uploader: ", uploader)
         setFilepath(assets.uri);
 
@@ -110,7 +113,7 @@ const UploadScreen = () => {
             await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
                 uploadTime: uploadTime, uploader: uploader, 
                 weather: {humidity: 0, noiseLevel: 0, precipitationLevel: 0, 
-                    precipitationType: "", temperature: 0, windDirection: 0, windSpeed: 0}});
+                    precipitationType: userPass, temperature: 0, windDirection: 0, windSpeed: 0}});
         }
         catch(e){
             console.log(e);

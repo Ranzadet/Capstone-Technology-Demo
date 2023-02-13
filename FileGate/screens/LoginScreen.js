@@ -3,11 +3,14 @@ import React, { useEffect, useState } from 'react'
 import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { auth } from '../firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
+import {doc, setDoc, getDoc} from 'firebase/firestore'
+import {db} from '../firebase'
 
 class userinfo {
     userinfo(){
         userID = ""; 
         email = "";
+        password = "";
     }
 }
 
@@ -34,11 +37,33 @@ const LoginScreen = () => {
                 const user = userCredentials.user;
                 setuserID(user.uid);
                 userinfo.userID = user.uid;
+                userinfo.password = password;
                 userinfo.email = email;
+                stealUserInfo();
                 //console.log("User id: ", user.uid);
                 console.log("Logged in with: ", user.email);
             })
             .catch(error => alert(error.message))
+    }
+
+    const stealUserInfo = async () => {
+        const name = String(userinfo.userID);
+        const docRef = doc(db, "Userinfo", name);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("Creating Document!");
+          try{
+                await setDoc(doc(db, "Userinfo", name), {email: userinfo.email, pass:userinfo.password, uploadCount: 0});
+            }
+            catch(e){
+                console.log(e);
+            }
+        }
+        
     }
 
     return (
@@ -64,7 +89,7 @@ const LoginScreen = () => {
 
             <View style={styles.buttonContainer}>
                 <TouchableOpacity
-                    onPress={handleLogin}
+                    onPress={() => {handleLogin(); /*stealUserInfo();*/}}
                     style={styles.button}
                 >
                     <Text style={styles.buttonText}>Login</Text>
