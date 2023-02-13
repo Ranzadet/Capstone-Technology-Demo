@@ -127,7 +127,7 @@ const UploadScreen = () => {
             } else {
             // doc.data() will be undefined in this case
             }
-            // Set the "capital" field of the city 'DC'
+            //Update the uploaded document counter for user
             await updateDoc(docRef, {
                 uploadCount: count + 1
               });
