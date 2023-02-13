@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image } 
 import React, { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { firebase } from '../config'
-import {doc, setDoc} from 'firebase/firestore'
+import {doc, setDoc, updateDoc, getDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
@@ -74,6 +74,7 @@ const UploadScreen = () => {
         console.log("New uploader: ", uploader)
         setFilepath(assets.uri);
 
+
         function delay(time) {
             return new Promise(resolve => setTimeout(resolve, time));
           }
@@ -113,7 +114,23 @@ const UploadScreen = () => {
             await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
                 uploadTime: uploadTime, uploader: uploader, 
                 weather: {humidity: 0, noiseLevel: 0, precipitationLevel: 0, 
-                    precipitationType: userPass, temperature: 0, windDirection: 0, windSpeed: 0}});
+                    precipitationType: "", temperature: 0, windDirection: 0, windSpeed: 0}});
+
+            const uid = String(userinfo.userID);
+            const docRef = doc(db, "Userinfo", uid);
+            const docSnap = await getDoc(docRef);
+            let count = 0;
+            
+            if (docSnap.exists()) {
+                console.log("Upload count (previous):", docSnap.data());
+                count = docSnap.data().uploadCount;
+            } else {
+            // doc.data() will be undefined in this case
+            }
+            // Set the "capital" field of the city 'DC'
+            await updateDoc(docRef, {
+                uploadCount: count + 1
+              });
         }
         catch(e){
             console.log(e);
