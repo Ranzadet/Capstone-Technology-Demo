@@ -35,7 +35,7 @@ const UploadScreen = () => {
         console.log("Password: ", userinfo.password);
         const assets = result.assets[0]
         const duration = assets.duration
-        let filExIndex = assets.uri.search(/\..../);
+        let filExIndex = assets.uri.search(/\..*/);
         const fileExtension = assets.uri.slice(filExIndex);
         const date = assets.exif.DateTimeOriginal;
         const uploadtime = new Date().toDateString();
