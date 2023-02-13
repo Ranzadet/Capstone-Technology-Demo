@@ -27,9 +27,10 @@ export default function App() {
   
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen name="Login" component={LoginScreen}/>
         <Stack.Screen name="Signup" component={SignupScreen}/>
         <Stack.Screen name="ModalD" component={ModalD} />
-        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+        {/* <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} /> */}
         <Stack.Screen name="Home" component={HomeScreen} />
         {/* <Stack.Screen name="FileUpload" component={FileUpload} />
         <Stack.Screen name="FileUpload2" component={FileUpload2} /> */}

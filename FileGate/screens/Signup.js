@@ -7,7 +7,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase'
 import { useNavigation } from '@react-navigation/native'
 
-export default function SignupScreen({navigation}) {
+export default function SignupScreen() {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
