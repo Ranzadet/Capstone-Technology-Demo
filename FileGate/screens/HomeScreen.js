@@ -34,6 +34,12 @@ const HomeScreen = () => {
             >
                 <Text style={styles.buttonText}>Upload files</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                onPress={() => {navigation.navigate("DownloadScreen")}}
+                style={styles.button}
+            >
+                <Text style={styles.buttonText}>Download files</Text>
+            </TouchableOpacity>
         </View>
     )
 }

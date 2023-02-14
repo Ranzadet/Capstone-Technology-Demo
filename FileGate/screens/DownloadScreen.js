@@ -6,45 +6,53 @@ import {doc, setDoc, updateDoc, getDoc, getDocs, collection, query, where} from 
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
+import {getStorage, ref} from 'firebase/storage'
 
 ``
 
 const DownloadScreen = () => {
-    const [image, setImage] = useState(null);
+    const [images, setImages] = useState([]);
     const [downloading, setDownloading] = useState(false);
-    const uploader = userinfo.userID;
 
     const downloadImage = async () => {
+        if (downloading){
+            return;
+        }
         setDownloading(true);
 
         const uid = String(userinfo.userID);
         const usrRef = doc(db, "Userinfo", uid);
         const docSnap0 = await getDoc(usrRef);
-        const count = docsnap0.data().uploadCount;
+        const count = docSnap0.data().uploadCount;
 
         const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
         const querySnapshot = await getDocs(q);
+        console.log(querySnapshot.size);
+        let i = 1;
         querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-        console.log(doc.id, " => ", doc.data());
-        console.log(doc.data().filepath); //fetch(doc.data().filepath);
+            console.log(i++);
+            console.log(doc.id, " => ", doc.data());
+            console.log(doc.data().filepath); //fetch(doc.data().filepath);
+            const arr = images.map((x) => x);
+            arr.push(doc.data().filepath);
+            setImages(arr);
         });
 
 
-        try{
-            const docRef = doc(db, "fdu-birds", uploader);
-            const docSnap = await getDoc(docRef);
+        // try{
+        //     const docRef = doc(db, "fdu-birds", uid);
+        //     const docSnap = await getDoc(docRef);
             
-            if (docSnap.exists()) {
-                console.log("Metadata:", docSnap.data());
-            } else {
-            // doc.data() will be undefined in this case
-            }
-            //Update the uploaded document counter for user
-        }
-        catch(e){
-            console.log(e);
-        }
+        //     if (docSnap.exists()) {
+        //         //console.log("Metadata:", docSnap.data());
+        //     } else {
+        //     // doc.data() will be undefined in this case
+        //     }
+        // }
+        // catch(e){
+        //     console.log(e);
+        // }
 
     };
 
@@ -57,12 +65,16 @@ const DownloadScreen = () => {
                 </Text>
             </TouchableOpacity> */}
             <View style={styles.container}>
-                {image && <Image source={{uri: image.uri}} style={{width: 300, height: 300}}></Image>} 
+                {/* {image && <Image source={{uri: image.uri}} style={{width: 300, height: 300}}></Image>} */}
+                {images.map((images, index) => {
+                    return <Image source={{ uri: images[index]}} style={{width: 300, height: 300}} key={images[index]} />;
+                })} 
                 <TouchableOpacity style={styles.buttonStyle} onPress={downloadImage}>
                     <Text style={styles.textStyle}>
-                        Upload
+                        See Your Images!
                     </Text>
                 </TouchableOpacity>
+                
             </View>
         </SafeAreaView>
     )

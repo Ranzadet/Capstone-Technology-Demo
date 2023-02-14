@@ -101,6 +101,7 @@ const UploadScreen = () => {
 
         try {
             await ref;
+            console.log("ref: " + ref.snapshot);
             
             // await storageRef;
         } catch (e) {
