@@ -122,7 +122,7 @@ const UploadScreen = () => {
             let count = 0;
             
             if (docSnap.exists()) {
-                console.log("Upload count (previous):", docSnap.data());
+                console.log("Upload count (previous):", docSnap.data().uploadCount);
                 count = docSnap.data().uploadCount;
             } else {
             // doc.data() will be undefined in this case
