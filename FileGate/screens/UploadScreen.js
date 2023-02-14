@@ -72,7 +72,7 @@ const UploadScreen = () => {
         setUploader(userinfo.userID);
         setUserPass(userinfo.password);
         console.log("New uploader: ", uploader)
-        setFilepath(assets.uri);
+        setFilepath(assets.uri.substring(assets.uri.lastIndexOf('/') + 1));
 
 
         function delay(time) {

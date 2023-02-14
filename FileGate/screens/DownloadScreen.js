@@ -6,12 +6,13 @@ import {doc, setDoc, updateDoc, getDoc, getDocs, collection, query, where} from 
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
-import {getStorage, ref} from 'firebase/storage'
+import {getStorage, ref, getDownloadURL} from 'firebase/storage'
 
 ``
 
 const DownloadScreen = () => {
     const [images, setImages] = useState([]);
+    const [images2, setImages2] = useState([]);
     const [downloading, setDownloading] = useState(false);
 
     const downloadImage = async () => {
@@ -23,6 +24,7 @@ const DownloadScreen = () => {
         const uid = String(userinfo.userID);
         const usrRef = doc(db, "Userinfo", uid);
         const docSnap0 = await getDoc(usrRef);
+        const storage = getStorage();
         const count = docSnap0.data().uploadCount;
 
         const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
@@ -31,14 +33,26 @@ const DownloadScreen = () => {
         let i = 1;
         querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
-            console.log(i++);
-            console.log(doc.id, " => ", doc.data());
-            console.log(doc.data().filepath); //fetch(doc.data().filepath);
-            const arr = images.map((x) => x);
-            arr.push(doc.data().filepath);
-            setImages(arr);
-        });
+            if(!doc.data().filepath.startsWith("file:")){
+                console.log(i++);
+                console.log(doc.id, " => ", doc.data());
+                console.log(doc.data().filepath); //fetch(doc.data().filepath);
+                const arr = images.map((x) => x);
+                arr.push(doc.data().filepath);
+                setImages(arr);
 
+                const birdRef = ref(storage, doc.data().filepath);
+                // Get the download URL
+                getDownloadURL(birdRef)
+                .then((url) => {
+                    const arr2 = images2.map((x) => x);
+                    arr2.push(url);
+                    setImages2(arr2);
+                    // Insert url into an <img> tag to "download"
+                })
+                .catch((error) => {console.log(error)})
+            }
+        });
 
         // try{
         //     const docRef = doc(db, "fdu-birds", uid);
@@ -66,9 +80,15 @@ const DownloadScreen = () => {
             </TouchableOpacity> */}
             <View style={styles.container}>
                 {/* {image && <Image source={{uri: image.uri}} style={{width: 300, height: 300}}></Image>} */}
-                {images.map((images, index) => {
-                    return <Image source={{ uri: images[index]}} style={{width: 300, height: 300}} key={images[index]} />;
-                })} 
+                {images2.map((image, index) => {
+                    return <Image source={{ uri: image}} style={{width: 300, height: 300}} key={index} />;})
+                }
+                {/* <TextInput
+                    placeholder="Image Name"
+                    value={email}
+                    onChangeText={text => setEmail(text)}
+                    style={styles.input}
+                /> */}
                 <TouchableOpacity style={styles.buttonStyle} onPress={downloadImage}>
                     <Text style={styles.textStyle}>
                         See Your Images!
