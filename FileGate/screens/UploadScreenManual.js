@@ -20,7 +20,7 @@ const UploadScreenManual = () => {
     
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(new Date(new Date().toLocaleDateString()));
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
 
@@ -142,6 +142,85 @@ const UploadScreenManual = () => {
             console.log(longitude);
         }
     }
+
+    const submitForWeather = async () => {
+        // const latMin = latitude;
+        // const latMax = latitude;
+        // const longMin = longitude;
+        // const longMax = longitude;
+        const lat = latitude;
+        const long = longitude;
+        let variance = 0;
+
+        // get date in format yyyy-mm-dd
+        const today = date;
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        // console.log(formattedDate);
+
+        // let station1id = "";
+        // let station2id = "";
+        // let station3id = "";
+        let stationids = ["", "", ""];
+        let index = 0;
+        let weatherLists = ["", "", ""];
+
+        console.log("1: beginning");
+
+        // while (index < 3) {
+        //     // https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=latitude-x,longitude-x,latitude+x,longitude+x
+        //     fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=' + String(lat-variance) + ',' + String(long-variance) + ',' + String(lat+variance) + ',' + String(long+variance), {
+        //         method: 'GET',
+        //         headers: {
+        //             token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
+        //         },
+        //     })
+        //     .then(response => response.json())
+        //     .then(json => {
+        //         for (let i = 0; i < json["results"].length; i++) {
+        //             let stationid = json["results"][i]["id"];
+        //             //https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?stationid=insertstationidhere
+        //             fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?stationid=' + String(stationid), {
+        //                 method: 'GET',
+        //                 headers: {
+        //                     token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
+        //                 },
+        //             })
+        //             .then(response2 => response2.json())
+        //             .then(json2 => {
+        //                 for (let j = 0; j < json2["results"].length; j++) {
+        //                     if (json2["results"][j]["id"] === "GHCND") {
+        //                         stationids[index] = stationid;
+        //                         index++;
+        //                     }
+        //                     if (index >= 3) {
+        //                         break;
+        //                     }
+        //                 }
+        //             })
+        //         }
+        //     })
+        //     variance += 0.0005;
+        // }
+
+        // for (let i = 0; i < stationids.length; i++) {
+        //     //https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=insertstationidhere&startdate=insertdatehere&enddate=insertdatehere
+        //     fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=' + stationids[i]  + '&startdate=' + formattedDate + '&enddate=' + formattedDate, {
+        //         method: 'GET',
+        //         headers: {
+        //             token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
+        //         },
+        //     })
+        //     .then(response3 => response3.json())
+        //     .then(json3 => {
+        //         const weatherList = json3["results"];
+        //         console.log(String(i) + ": " + weatherList.toString());
+        //         weatherLists[i] = weatherList;
+        //     })
+        // }
+    }
     
     return (
         <SafeAreaView style={styles.container}>
@@ -175,10 +254,10 @@ const UploadScreenManual = () => {
             <View> */}
                 <RNDateTimePicker 
                     value={date}
-                    mode="datetime"
+                    mode="date"
                     onChange={datetimeChanged}
                 />
-                <Text>Selected: {date.toLocaleString()}</Text>
+                <Text>Selected: {date.toLocaleDateString()}</Text>
                 {/* {show && (
                     <DateTimePicker
                         testID="dateTimePicker"
@@ -188,6 +267,13 @@ const UploadScreenManual = () => {
                         onChange={onChange}
                     />
                 )} */}
+            </View>
+            <View style={styles.container}>
+                <TouchableOpacity style={styles.buttonStyle} onPress={submitForWeather}>
+                    <Text style={styles.textStyle}>
+                        Submit for weather
+                    </Text>
+                </TouchableOpacity>
             </View>
         </SafeAreaView>
     )

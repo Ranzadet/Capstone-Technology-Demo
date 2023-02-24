@@ -5,7 +5,36 @@ const TestWeatherScreen = () => {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=40.8559,-74.0735,40.9159,-74.0135', {
+    // function printNames(value) {
+    //   if (value["name"].includes("Hack")) {
+    //     console.log(value);
+    //   }
+    // }
+    
+    fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/locations?limit=1', {
+        method: 'GET',
+        headers: {
+            token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
+        },
+    })
+      .then(response => response.json())
+      .then(json => {
+        // for (let location in json["results"]) {
+        //   if (location["name"].includes("Hack")) {
+        //     console.log(location);
+        //   }
+        // }
+        let i = 0;
+        while (i < json["results"].length) {
+          if (json["results"][i]["name"].includes("Hack")) {
+            console.log(location);
+          }
+          i++;
+        }
+      })
+      // .then(json => json["results"].forEach(printNames))
+    
+    fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/locations?limit=1', {
         method: 'GET',
         headers: {
             token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
@@ -13,7 +42,7 @@ const TestWeatherScreen = () => {
     })
       .then(response => response.json())
       .then(json => setData(json))
-      .then(console.log(data))
+      // .then(console.log(data))
       .catch(error => console.error(error));
   }, []);
 
@@ -26,6 +55,6 @@ const TestWeatherScreen = () => {
       )}
     </View>
   );
-};
+}; 
 
-export default TestWeatherScreen;
+export default TestWeatherScreen; 
