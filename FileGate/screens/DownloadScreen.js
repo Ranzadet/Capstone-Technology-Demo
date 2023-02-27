@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image, RefreshControl } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image, RefreshControl, Pressable, FlatList, TextInput } from 'react-native'
 import React, { useState, useCallback } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { firebase } from '../config'
@@ -13,11 +13,15 @@ import { ScrollView } from 'react-native';
 ``
 
 const DownloadScreen = () => {
-    const [images, setImages] = useState([]);
+    const [metadata, setMetadata] = useState([]);
     const [images2, setImages2] = useState([]);
     const [downloading, setDownloading] = useState(false);
     const images3 = []; 
     const [refreshing, setRefreshing] = useState(false);
+    const [updateData, setUpdateData] = useState(false);
+    const [metaView, setMetaView] = useState(null);
+    const [uploadData, setUploadData] = useState({});
+    let renderCount = 0;
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -44,6 +48,7 @@ const DownloadScreen = () => {
         const querySnapshot = await getDocs(q);
         console.log(querySnapshot.size);
         let i = 1;
+        const newMeta = [];
         const newImages2 = [];
         let checkCount = 0;
         querySnapshot.forEach((doc) => {
@@ -53,9 +58,7 @@ const DownloadScreen = () => {
                 console.log(i++);
                 console.log(doc.id, " => ", doc.data());
                 console.log(doc.data().filepath); //fetch(doc.data().filepath);
-                const arr = images.map((x) => x);
-                arr.push(doc.data().filepath);
-                setImages(arr);
+                newMeta.push(doc.data());
 
                 const birdRef = ref(storage, doc.data().filepath);
                 // Get the download URL
@@ -76,6 +79,7 @@ const DownloadScreen = () => {
         });
         console.log("New Images 2: ", newImages2);
         setImages2(newImages2);
+        setMetadata(newMeta);
 
         console.log("Database count: ", count);
         console.log("Actual Count: ", checkCount);
@@ -101,12 +105,35 @@ const DownloadScreen = () => {
 
     };
 
+    const updateMeta = (index) => {
+        console.log("Index received: ", index);
+        let count = 0;
+        metadata.forEach((data) => {
+            if (count == index){
+                console.log("Data found: ", data);
+                setMetaView(data);
+                setUpdateData(!updateData);
+            }
+            count++;
+        });
+
+        console.log("Metaview: ", metaView);
+        //return <Text></Text>;
+    }
+
+    const renderMeta = (data) => {
+        return <TextInput value={data}></TextInput>;
+    }
+
     
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
+            {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null}
+                {metaView != null ? <View><Text>Current value: {metaView.filepath}</Text><TextInput key={metaView.filepath} style={styles.input} defaultValue={String(metaView.filepath)}></TextInput></View> : null}
+                
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
                     <Text style={styles.textStyle}>
                         Pick an image
@@ -117,7 +144,7 @@ const DownloadScreen = () => {
                     {console.log("Images count: ", images3)}
                     {images2.map((image, index) => {
                         console.log("Image index: ", index);
-                        return <Image source={{ uri: image}} style={{width: 300, height: 300}} key={index} />;})
+                        return <Pressable onPress={() => {updateMeta(index);}}><Image source={{ uri: image}} style={{width: 300, height: 300}} key={index} /></Pressable>;})
                     }
                     {/* <TextInput
                         placeholder="Image Name"
@@ -131,9 +158,11 @@ const DownloadScreen = () => {
                             See Your Images!
                         </Text>
                     </TouchableOpacity>
+
                     
                 </View>
             </ScrollView>
+            
         </SafeAreaView>
     )
 }
@@ -170,10 +199,11 @@ const styles = StyleSheet.create({
       resizeMode: 'stretch',
     },
     input: {
-      backgroundColor: 'white',
+      backgroundColor: 'blue',
       paddingHorizontal: 15,
       paddingVertical: 10,
       borderRadius: 10,
       marginTop: 5,
+      color:'white'
   }
 });  
