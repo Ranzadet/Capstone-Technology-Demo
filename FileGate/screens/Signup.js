@@ -1,26 +1,35 @@
-import React, { useState, useContext } from 'react';
+import React, { useState} from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import FormButton from './FormButton';
 import FormInput from './FormInput';
 // import { AuthContext } from './AuthProv';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, signOut } from 'firebase/auth';
+import 'firebase/auth';
+import { useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { auth } from '../firebase'
-import { useNavigation } from '@react-navigation/native'
+
 
 export default function SignupScreen() {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  
   // const auth = getAuth();
-
   // const { register } = useContext(AuthContext);
-  const handleSignup = () => {
-    createUserWithEmailAndPassword(auth,email,password)
-    .then(() => {
-      navigation.replace("Login")
-    })
-    .catch(error => alert(error.message))
-}
+
+  const handleSignup = async () => {
+    
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(userCredential.user);
+      alert('Please check your email to verify your email address.');
+    } catch (error) {
+      alert(error.message);
+    }
+    navigation.navigate("Login");
+  }
+ 
   return (
     <View style={styles.container}>
       <Text style={styles.text}>Create an account</Text>
