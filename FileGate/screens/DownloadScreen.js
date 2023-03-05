@@ -125,14 +125,27 @@ const DownloadScreen = () => {
         return <TextInput value={data}></TextInput>;
     }
 
+    const uploadImage = () =>{
+        return;
+    }
+
     
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
-            {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null}
-                {metaView != null ? <View><Text>Current value: {metaView.filepath}</Text><TextInput key={metaView.filepath} style={styles.input} defaultValue={String(metaView.filepath)}></TextInput></View> : null}
+            {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
+                {metaView != null ? 
+                <View>
+                    {Object.values(metaView).map(key => 
+                        <View>
+                        <Text>Current value: {typeof key != 'object' && key}</Text>
+                        <TextInput key={key} style={styles.input} defaultValue={String(key)}></TextInput>
+                        </View>
+                    )}
+                    <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>
+                </View> : null}
                 
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
                     <Text style={styles.textStyle}>
@@ -193,6 +206,15 @@ const styles = StyleSheet.create({
       backgroundColor: '#DDDDDD',
       padding: 5,
     },
+    buttonStyle2: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        backgroundColor: '#DDDDDD',
+        padding: 10,
+        width: 200,
+        position: "relative",
+        left:'90%',
+      },
     imageIconStyle: {
       height: 20,
       width: 20,
