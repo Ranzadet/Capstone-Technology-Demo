@@ -1,25 +1,27 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
-import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, StyleSheet, Text, TextInput, TouchableOpacity, View, Alert } from 'react-native'
 import { auth } from '../firebase'
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import FormButton from './FormButton';
 import FormInput from './FormInput';
 
-const LoginScreen = () => {
+const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     
-    const navigation = useNavigation()
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
             if (user && user.emailVerified) {
-                navigation.navigate("Home");
+                navigation.replace("Home");
             }
-            else{
-                alert("verify email");
-            }
+            // else if (user){
+            //     Alert.alert("verify email");
+            // }
+            // else{
+            //     Alert.alert("Not a Valid Account");
+            // }
         })
 
         return () => {
@@ -34,7 +36,7 @@ const LoginScreen = () => {
                 const user = userCredentials.user;
                 console.log("Logged in with: ", user.email)
             })
-            .catch(error => alert(error.message))
+            .catch(error => Alert.alert("Verify Account pwease"))
     }
 
     return (
@@ -57,10 +59,17 @@ const LoginScreen = () => {
             <FormButton buttonTitle='Login' onPress={handleLogin} />
             <TouchableOpacity
                 style={styles.navButton}
-                onPress={() => navigation.navigate('Signup')}
+                onPress={() => navigation.replace('Signup')}
             >
                 <Text style={styles.navButtonText}>New user? Join here</Text>
             </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.navButton}
+                onPress={() => navigation.replace('ResetPassword')}
+            >
+                <Text style={styles.navButtonText}>Forgot Password?</Text>
+            </TouchableOpacity>
+            {/* <FormButton buttonTitle='Forgot Password?' onPress={() => navigation.navigate('ResetPassword')} /> */}
        </View>
     )
 }
@@ -69,7 +78,7 @@ export default LoginScreen
 
 const styles = StyleSheet.create({
     container: {
-      backgroundColor: '#f5f5f5',
+      backgroundColor: '#f5f45f5',
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center'

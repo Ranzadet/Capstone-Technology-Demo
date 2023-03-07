@@ -1,5 +1,5 @@
 import React, { useState} from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button, Alert } from 'react-native';
 import FormButton from './FormButton';
 import FormInput from './FormInput';
 // import { AuthContext } from './AuthProv';
@@ -10,8 +10,7 @@ import { useNavigation } from '@react-navigation/native';
 import { auth } from '../firebase'
 
 
-export default function SignupScreen() {
-  const navigation = useNavigation();
+export default function SignupScreen({navigation}) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
@@ -19,15 +18,16 @@ export default function SignupScreen() {
   // const { register } = useContext(AuthContext);
 
   const handleSignup = async () => {
-    
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await sendEmailVerification(userCredential.user);
-      alert('Please check your email to verify your email address.');
-    } catch (error) {
-      alert(error.message);
-    }
-    navigation.navigate("Login");
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(userCredential.user)
+      .then(() => {
+        // Password reset email sent successfully
+        Alert.alert('Email verification email sent', `An email has been sent to ${email} with instructions to verify your email.`);
+      })
+      .catch((error) => {
+        // An error occurred while sending the password reset email
+        console.log(error.message);
+      });
   }
  
   return (
@@ -48,6 +48,7 @@ export default function SignupScreen() {
         secureTextEntry={true}
       />
       <FormButton buttonTitle='Signup' onPress={handleSignup} />
+      <Button style={styles.button} title="Back to Login" onPress={() => navigation.replace('Login')} />
     </View>
   );
 }
@@ -61,5 +62,10 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 24,
     marginBottom: 10
+  },
+  button: {
+    width: '80%',
+    height: 48,
+    marginTop: 16,
   }
 });
