@@ -40,12 +40,12 @@ const HomeScreen = () => {
             >
                 <Text style={styles.buttonText}>Upload files w/ manual data</Text>
             </TouchableOpacity>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 onPress={() => {navigation.navigate("TestWeatherScreen")}}
                 style={styles.button}
             >
                 <Text style={styles.buttonText}>Testing weather</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }

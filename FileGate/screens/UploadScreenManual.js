@@ -8,7 +8,6 @@ import { stringify } from '@firebase/util'
 import datetimepicker from '@react-native-community/datetimepicker'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 // import { get } from 'jquery'
-``
 
 const UploadScreenManual = () => {
     const [image, setImage] = useState(null);
@@ -23,6 +22,77 @@ const UploadScreenManual = () => {
     const [date, setDate] = useState(new Date(new Date().toLocaleDateString()));
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
+
+    // const requestQueue = []; // an array to store pending requests
+    // let isFetching = false; // a flag to track whether a request is currently being fetched
+    const RATE_LIMIT_DELAY = 500; // the minimum delay between requests, in milliseconds
+
+    async function fetchWithRateLimit(url, options) {
+        return new Promise((resolve, reject) => {
+          // delay the request by the rate limit delay
+          setTimeout(() => {
+            fetch(url, options)
+              .then(response => {
+                // resolve the promise with the response
+                resolve(response);
+              })
+              .catch(error => {
+                // reject the promise with the error
+                reject(error);
+            });
+          }, RATE_LIMIT_DELAY);
+        });
+    }
+
+    // function fetchWithRateLimit(url, options) {
+    //     return new Promise((resolve, reject) => {
+    //         // create a function to add the request to the queue
+    //         const enqueueRequest = () => {
+    //         requestQueue.push({ url, options, resolve, reject });
+    //         processRequestQueue();
+    //         };
+
+    //         // add the request to the queue
+    //         enqueueRequest();
+    //     });
+    // }
+
+    // function processRequestQueue() {
+    //     // if a request is already being fetched or the queue is empty, do nothing
+    //     if (isFetching || requestQueue.length === 0) {
+    //         return;
+    //     }
+
+    //     // get the next request from the queue
+    //     const { url, options, resolve, reject } = requestQueue.shift();
+
+    //     // fetch the request
+    //     isFetching = true;
+    //     fetch(url, options)
+    //         .then(response => {
+    //         // reset the flag and process the next request in the queue after the rate limit delay
+    //         isFetching = false;
+    //         setTimeout(processRequestQueue, RATE_LIMIT_DELAY);
+
+    //         // resolve the promise with the response
+    //         resolve(response);
+    //         })
+    //         .catch(error => {
+    //         // reset the flag and process the next request in the queue immediately
+    //         isFetching = false;
+    //         processRequestQueue();
+
+    //         // reject the promise with the error
+    //         reject(error);
+    //         });
+    // }
+
+    function isDateBetween(dateStr, startStr, endStr) {
+        const date = new Date(dateStr);
+        const start = new Date(startStr);
+        const end = new Date(endStr);
+        return date >= start && date <= end;
+    }
 
     const pickImage = async () => {
         // No permissions request is necessary for launching the image library
@@ -123,6 +193,10 @@ const UploadScreenManual = () => {
         setDate(datetimeChoice);
     }
 
+    function isEmpty(obj) {
+        return Object.keys(obj).length === 0;
+    }
+
     function isNumeric(str) {
         if (typeof str != "string") return false // we only process strings!  
         return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
@@ -151,6 +225,11 @@ const UploadScreenManual = () => {
         const lat = latitude;
         const long = longitude;
         let variance = 0;
+        // console.log("lat: " + String(lat));
+        // console.log("long: " + String(long));
+        // console.log("lat: " + typeof lat);
+        // console.log("long: " + typeof long);
+        
 
         // get date in format yyyy-mm-dd
         const today = date;
@@ -158,7 +237,7 @@ const UploadScreenManual = () => {
         const month = String(today.getMonth() + 1).padStart(2, '0');
         const day = String(today.getDate()).padStart(2, '0');
         const formattedDate = `${year}-${month}-${day}`;
-        // console.log(formattedDate);
+        console.log("date: " + formattedDate);
 
         // let station1id = "";
         // let station2id = "";
@@ -169,57 +248,124 @@ const UploadScreenManual = () => {
 
         console.log("1: beginning");
 
-        // while (index < 3) {
-        //     // https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=latitude-x,longitude-x,latitude+x,longitude+x
-        //     fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=' + String(lat-variance) + ',' + String(long-variance) + ',' + String(lat+variance) + ',' + String(long+variance), {
-        //         method: 'GET',
-        //         headers: {
-        //             token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
-        //         },
-        //     })
-        //     .then(response => response.json())
-        //     .then(json => {
-        //         for (let i = 0; i < json["results"].length; i++) {
-        //             let stationid = json["results"][i]["id"];
-        //             //https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?stationid=insertstationidhere
-        //             fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?stationid=' + String(stationid), {
-        //                 method: 'GET',
-        //                 headers: {
-        //                     token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
-        //                 },
-        //             })
-        //             .then(response2 => response2.json())
-        //             .then(json2 => {
-        //                 for (let j = 0; j < json2["results"].length; j++) {
-        //                     if (json2["results"][j]["id"] === "GHCND") {
-        //                         stationids[index] = stationid;
-        //                         index++;
-        //                     }
-        //                     if (index >= 3) {
-        //                         break;
-        //                     }
-        //                 }
-        //             })
-        //         }
-        //     })
-        //     variance += 0.0005;
-        // }
+        while (index < 3) {
 
-        // for (let i = 0; i < stationids.length; i++) {
-        //     //https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=insertstationidhere&startdate=insertdatehere&enddate=insertdatehere
-        //     fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=' + stationids[i]  + '&startdate=' + formattedDate + '&enddate=' + formattedDate, {
-        //         method: 'GET',
-        //         headers: {
-        //             token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
-        //         },
-        //     })
-        //     .then(response3 => response3.json())
-        //     .then(json3 => {
-        //         const weatherList = json3["results"];
-        //         console.log(String(i) + ": " + weatherList.toString());
-        //         weatherLists[i] = weatherList;
-        //     })
-        // }
+            console.log("2: while loop started");
+            console.log('https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=' + (lat-variance).toFixed(4) + ',' + (long-variance).toFixed(4) + ',' + (lat+variance).toFixed(4) + ',' + (long+variance).toFixed(4));
+
+            // https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=latitude-x,longitude-x,latitude+x,longitude+x
+            let response = await fetchWithRateLimit('https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=' + (lat-variance).toFixed(4) + ',' + (long-variance).toFixed(4) + ',' + (lat+variance).toFixed(4) + ',' + (long+variance).toFixed(4), {
+                method: 'GET',
+                headers: {
+                    token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
+                },
+            });
+            let json = await response.json();
+
+            console.log("3: json gotten from response");
+            console.log(json);
+
+            if (!isEmpty(json)) {
+
+                for (let i = 0; i < json["results"].length; i++) {
+                    let stationid = json["results"][i]["id"];
+                    console.log("3.5: stationid is " + stationid);
+                    if (!isDateBetween(formattedDate, json["results"][i]["mindate"], json["results"][i]["maxdate"])) {
+                        console.log("3.6: stationid " + stationid + " ignored");
+                        continue;
+                    }
+                    //https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?stationid=insertstationidhere
+                    let response2 = await fetchWithRateLimit('https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?stationid=' + String(stationid), {
+                        method: 'GET',
+                        headers: {
+                            token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
+                        },
+                    });
+                    let json2 = await response2.json();
+
+                    console.log("4: json2 gotten from response");
+                    console.log(json2);
+
+                    if (!isEmpty(json2)) {
+
+                        for (let j = 0; j < json2["results"].length; j++) {
+                            if (json2["results"][j]["id"] === "GHCND") {
+                                stationids[index] = stationid;
+                                index++;
+                                console.log("5: station that supports GHCND dataset found");
+                            }
+                            if (index >= 3) {
+                                break;
+                            }
+                        }
+                        if (index >= 3) {
+                            break;
+                        }
+                    
+                    }
+                }
+                // .then(response => response.json())
+                // .then(async json => {
+                //     for (let i = 0; i < json["results"].length; i++) {
+                //         let stationid = json["results"][i]["id"];
+                //         //https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?stationid=insertstationidhere
+                //         await fetch('https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?stationid=' + String(stationid), {
+                //             method: 'GET',
+                //             headers: {
+                //                 token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
+                //             },
+                //         })
+                //         .then(response2 => response2.json())
+                //         .then(json2 => {
+                //             for (let j = 0; j < json2["results"].length; j++) {
+                //                 if (json2["results"][j]["id"] === "GHCND") {
+                //                     stationids[index] = stationid;
+                //                     index++;
+                //                 }
+                //                 if (index >= 3) {
+                //                     break;
+                //                 }
+                //             }
+                //         })
+                //     }
+                // })
+
+            }
+            variance += 0.0050;
+            console.log("6: variance updated");
+        }
+
+        console.log("7: while loop completed");
+        console.log("7.0: stationids: " + stationids.toString());
+
+        for (let i = 0; i < stationids.length; i++) { // needs some work
+
+            console.log("8: new for loop started");
+
+            //https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=insertstationidhere&startdate=insertdatehere&enddate=insertdatehere
+            let response3 = await fetchWithRateLimit('https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=' + stationids[i]  + '&startdate=' + formattedDate + '&enddate=' + formattedDate, {
+                method: 'GET',
+                headers: {
+                    token: 'nOAusqiwSpCeUaFDUlOtljxvxWeAxQdF',
+                },
+            });
+            let json3 = await response3.json();
+            console.log("9: json3 gotten from response");
+            console.log(json3);
+
+            if (!isEmpty(json3)) {
+
+                const weatherList = json3["results"];
+                // console.log(String(i) + ": " + weatherList.toString());
+                console.log(String(i) + ": " + JSON.stringify(weatherList));
+                weatherLists[i] = JSON.stringify(weatherList);
+
+                console.log("10: weather added to weatherList");
+            }
+        }
+
+        console.log("11: submitForWeather function completed");
+        console.log("11.1: weatherLists:\n" + weatherLists.join('\n'));
     }
     
     return (
