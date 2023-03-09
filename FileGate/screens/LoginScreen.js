@@ -36,7 +36,7 @@ const LoginScreen = ({navigation}) => {
                 const user = userCredentials.user;
                 console.log("Logged in with: ", user.email)
             })
-            .catch(error => Alert.alert("Verify Account pwease"))
+            .catch(error => Alert.alert("Verify Account"))
     }
 
     return (
