@@ -1,11 +1,12 @@
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image, TextInput, Button } from 'react-native'
 import React, { useState, useEffect } from 'react'
+import { useStateWithCallbackLazy } from 'use-state-with-callback'
 import * as ImagePicker from 'expo-image-picker'
 import { firebase } from '../config'
 import {doc, setDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
-import datetimepicker from '@react-native-community/datetimepicker'
+// import datetimepicker from '@react-native-community/datetimepicker'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 // import { get } from 'jquery'
 
@@ -16,6 +17,9 @@ const UploadScreenManual = () => {
     const [uploadTime, setUploadTime] = useState('')
     const [uploader, setUploader] = useState('')
     const [filepath, setFilepath] = useState('')
+    // const [weather, setWeather] = useState([])
+    // const [weatherIsUpdated, setWeatherIsUpdated] = useState(false)
+    const [weather, setWeather] = useState([]);
     
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
@@ -86,6 +90,12 @@ const UploadScreenManual = () => {
     //         reject(error);
     //         });
     // }
+
+    // useEffect(() => {
+    //     console.log("useEffect: weather variable has been updated");
+    //     console.log("weather:\n" + weather.join('\n'));
+    //     setWeatherIsUpdated(true);
+    // }, [weather])
 
     function isDateBetween(dateStr, startStr, endStr) {
         const date = new Date(dateStr);
@@ -173,15 +183,29 @@ const UploadScreenManual = () => {
             console.log(e);
         }
         try{
+            // setWeatherIsUpdated(false);
             const mseconds = String(Date.now());
             const name = String(uploadTime + "_" + mseconds);
-            await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
+            const weatherList = await submitForWeather();
+            setWeather(weatherList);
+            // setWeather(await submitForWeather(), async () => {
+            //     console.log("Weather: \n" + weather);
+            //     await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
+            //         uploadTime: uploadTime, uploader: uploader, 
+            //         weather: weather});
+            // });
+            await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
                 uploadTime: uploadTime, uploader: uploader, 
-                weather: {humidity: 0, noiseLevel: 0, precipitationLevel: 0, 
-                    precipitationType: "", temperature: 0, windDirection: 0, windSpeed: 0}});
+                weather: weatherList});
+            // while (!weatherIsUpdated) {
+            //     delay(1000);
+            //     console.log("Delaying 1 second...")
+            // }
+            // setWeatherIsUpdated(false);
         }
         catch(e){
             console.log(e);
+            console.log(e.stack);
         }
         setUploading(false);
         Alert.alert('Image/video upload successful!');
@@ -201,6 +225,14 @@ const UploadScreenManual = () => {
         if (typeof str != "string") return false // we only process strings!  
         return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
                !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+    }
+
+    function delay(time) {
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve();
+          }, time);
+        });
     }
 
     const latitudeChanged = (text) => {
@@ -270,7 +302,7 @@ const UploadScreenManual = () => {
                 for (let i = 0; i < json["results"].length; i++) {
                     let stationid = json["results"][i]["id"];
                     console.log("3.5: stationid is " + stationid);
-                    if (!isDateBetween(formattedDate, json["results"][i]["mindate"], json["results"][i]["maxdate"])) {
+                    if (!isDateBetween(formattedDate, json["results"][i]["mindate"], json["results"][i]["maxdate"]) || stationids.includes(stationid)) {
                         console.log("3.6: stationid " + stationid + " ignored");
                         continue;
                     }
@@ -366,6 +398,11 @@ const UploadScreenManual = () => {
 
         console.log("11: submitForWeather function completed");
         console.log("11.1: weatherLists:\n" + weatherLists.join('\n'));
+        // setWeatherIsUpdated(false);
+        // setWeather(weatherLists);
+        // console.log("11.2: weather variable (array) has been set");
+        // console.log("11.3: weather:\n" + weather.join('\n'));
+        return weatherLists;
     }
     
     return (
@@ -414,13 +451,13 @@ const UploadScreenManual = () => {
                     />
                 )} */}
             </View>
-            <View style={styles.container}>
+            {/* <View style={styles.container}>
                 <TouchableOpacity style={styles.buttonStyle} onPress={submitForWeather}>
                     <Text style={styles.textStyle}>
                         Submit for weather
                     </Text>
                 </TouchableOpacity>
-            </View>
+            </View> */}
         </SafeAreaView>
     )
 }
