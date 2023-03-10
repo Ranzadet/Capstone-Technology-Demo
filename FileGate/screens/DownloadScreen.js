@@ -15,11 +15,11 @@ import { ScrollView } from 'react-native';
 const DownloadScreen = () => {
     const [metadata, setMetadata] = useState([]);
     const [images2, setImages2] = useState([]);
+    const [imageCheck, setImageCheck] = useState([]);
     const [downloading, setDownloading] = useState(false);
-    const images3 = []; 
     const [refreshing, setRefreshing] = useState(false);
     const [updateData, setUpdateData] = useState(false);
-    const [metaView, setMetaView] = useState(null);
+    const [metaView, setMetaView] = useState({});
     const [uploadData, setUploadData] = useState({});
     let renderCount = 0;
 
@@ -50,6 +50,7 @@ const DownloadScreen = () => {
         let i = 1;
         const newMeta = [];
         const newImages2 = [];
+        const newImageCheck = [];
         let checkCount = 0;
         querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
@@ -70,7 +71,7 @@ const DownloadScreen = () => {
                     //console.log("New arr2: ", arr2);
                     //setImages2(arr2);
                     newImages2.push(url);
-                    images3.push(url);
+                    newImageCheck.push(doc.data().filepath);
                     console.log(url);
                     // Insert url into an <img> tag to "download"
                 })
@@ -79,6 +80,7 @@ const DownloadScreen = () => {
         });
         console.log("New Images 2: ", newImages2);
         setImages2(newImages2);
+        setImageCheck(newImageCheck);
         setMetadata(newMeta);
 
         console.log("Database count: ", count);
@@ -107,14 +109,12 @@ const DownloadScreen = () => {
 
     const updateMeta = (index) => {
         console.log("Index received: ", index);
-        let count = 0;
         metadata.forEach((data) => {
-            if (count == index){
+            if (data.filepath == imageCheck[index]){
                 console.log("Data found: ", data);
                 setMetaView(data);
                 setUpdateData(!updateData);
             }
-            count++;
         });
 
         console.log("Metaview: ", metaView);
@@ -125,7 +125,35 @@ const DownloadScreen = () => {
         return <TextInput value={data}></TextInput>;
     }
 
-    const uploadImage = () =>{
+    const uploadImage = async () =>{
+        const uid = String(userinfo.userID);
+        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        const querySnapshot = await getDocs(q);
+        let docRef;
+        querySnapshot.forEach((doc) => {
+            if (doc.data().filepath == metaView.filepath){
+                console.log(doc.data().filepath);
+                docRef = doc;
+            }
+        });
+
+        if (docRef && docRef.id){
+            console.log("Updating Document...");
+            await updateDoc(docRef, {
+                filepath: metaView.filepath, 
+                uploadTime: metaView.uploadTime,
+                uploader: metaView.uploader,
+                weather: metaView.weather,
+                metadata: metaView.metadata
+            });
+            console.log("Document Update Successful!");
+            Alert.alert('Document update successful!');
+        }
+        else{
+            console.log("Error updating document! Could not find doc in list. ");
+            console.log("Current MetaView: ", metaView);
+        }
+        
         return;
     }
 
@@ -136,16 +164,32 @@ const DownloadScreen = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
-                {metaView != null ? 
                 <View>
                     {Object.values(metaView).map(key => 
                         <View>
                         <Text>Current value: {typeof key != 'object' && key}</Text>
-                        <TextInput key={key} style={styles.input} defaultValue={String(key)}></TextInput>
+                        <TextInput key={key} style={styles.input} defaultValue={String(key)} onChangeText={(text)=>
+                            {
+                                for (let i = 0;i<Object.keys(metaView).length;i++){
+                                    if (metaView[Object.keys(metaView)[i]] == key){
+                                        metaView[Object.keys(metaView)[i]] = text;
+                                        console.log(metaView[Object.keys(metaView)[i]]);
+                                        console.log("New: ", text);
+                                        setMetaView(metaView);
+                                    }
+                                }
+                                }}></TextInput>
                         </View>
                     )}
+
+                {Object.keys(metaView).map(key => (
+                    <View style={styles.container} key={key}>
+                        <Text>{key}: {String(metaView[key])}</Text>
+                    </View>
+                ))}
+                    
                     <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>
-                </View> : null}
+                </View> 
                 
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
                     <Text style={styles.textStyle}>
@@ -154,10 +198,10 @@ const DownloadScreen = () => {
                 </TouchableOpacity> */}
                 <View style={styles.container}>
                     {/* {image && <Image source={{uri: image.uri}} style={{width: 300, height: 300}}></Image>} */}
-                    {console.log("Images count: ", images3)}
-                    {images2.map((image, index) => {
-                        console.log("Image index: ", index);
-                        return <Pressable onPress={() => {updateMeta(index);}}><Image source={{ uri: image}} style={{width: 300, height: 300}} key={index} /></Pressable>;})
+                    {console.log("Images count: ", images2)}
+                    {console.log("Metaview (after):", metaView)}
+                    {images2.map(image => 
+                       <View key={image}><Pressable onPress={() => {updateMeta(images2.indexOf(image));}}><Image source={{ uri: image}} style={{width: 300, height: 300}} key={image} /></Pressable></View>)
                     }
                     {/* <TextInput
                         placeholder="Image Name"
@@ -202,6 +246,7 @@ const styles = StyleSheet.create({
     },
     buttonStyle: {
       alignItems: 'center',
+      position:'relative',
       flexDirection: 'row',
       backgroundColor: '#DDDDDD',
       padding: 5,
@@ -209,11 +254,11 @@ const styles = StyleSheet.create({
     buttonStyle2: {
         alignItems: 'center',
         flexDirection: 'row',
-        backgroundColor: '#DDDDDD',
+        backgroundColor: '#8D08EF',
         padding: 10,
         width: 200,
         position: "relative",
-        left:'90%',
+        left:'15%'
       },
     imageIconStyle: {
       height: 20,
