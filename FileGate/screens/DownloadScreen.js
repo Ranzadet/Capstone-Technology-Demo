@@ -20,6 +20,7 @@ const DownloadScreen = () => {
     const [refreshing, setRefreshing] = useState(false);
     const [updateData, setUpdateData] = useState(false);
     const [metaView, setMetaView] = useState({});
+    const [helpInput, setHelpInput] = useState({});
     const [uploadData, setUploadData] = useState({});
     let renderCount = 0;
 
@@ -133,13 +134,14 @@ const DownloadScreen = () => {
         querySnapshot.forEach((doc) => {
             if (doc.data().filepath == metaView.filepath){
                 console.log(doc.data().filepath);
-                docRef = doc;
+                docRef = doc.id;
+                console.log("ID: ", doc.id);
             }
         });
 
-        if (docRef && docRef.id){
+        if (docRef){
             console.log("Updating Document...");
-            await updateDoc(docRef, {
+            await updateDoc(doc(db, "fdu-birds", docRef), {
                 filepath: metaView.filepath, 
                 uploadTime: metaView.uploadTime,
                 uploader: metaView.uploader,
@@ -157,6 +159,20 @@ const DownloadScreen = () => {
         return;
     }
 
+    const textChangeMeta = (text, key)=> {
+        console.log("Text is changing!: ", text);
+        for (let i = 0;i<Object.keys(metaView).length;i++){
+            if (metaView[Object.keys(metaView)[i]] == key){
+                metaView[Object.keys(metaView)[i]] = text;
+                console.log(metaView[Object.keys(metaView)[i]]);
+                console.log("New: ", text);
+                setMetaView(metaView);
+                helpInput[Object.keys(helpInput)[i]] = text;
+                setHelpInput(helpInput);
+            }
+        }
+    }
+
     
     return (
         <SafeAreaView style={styles.container}>
@@ -168,17 +184,8 @@ const DownloadScreen = () => {
                     {Object.values(metaView).map(key => 
                         <View>
                         <Text>Current value: {typeof key != 'object' && key}</Text>
-                        <TextInput key={key} style={styles.input} defaultValue={String(key)} onChangeText={(text)=>
-                            {
-                                for (let i = 0;i<Object.keys(metaView).length;i++){
-                                    if (metaView[Object.keys(metaView)[i]] == key){
-                                        metaView[Object.keys(metaView)[i]] = text;
-                                        console.log(metaView[Object.keys(metaView)[i]]);
-                                        console.log("New: ", text);
-                                        setMetaView(metaView);
-                                    }
-                                }
-                                }}></TextInput>
+                        <TextInput key={key} style={styles.input} defaultValue={String(key)} onSubmitEditing={(value) => {textChangeMeta(value.nativeEvent.text, key)}}></TextInput> 
+                        {/*Current issue is that key is set as the first metaView value, but never changes to match new typed input values unless the component is re-rendered */}
                         </View>
                     )}
 

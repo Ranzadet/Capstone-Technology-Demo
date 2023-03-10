@@ -112,6 +112,7 @@ const UploadScreen = () => {
             console.log(filepath);
             const mseconds = String(Date.now());
             const name = String(uploadTime + "_" + mseconds);
+            
             await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
                 uploadTime: uploadTime, uploader: uploader, 
                 weather: {humidity: 0, noiseLevel: 0, precipitationLevel: 0, 
