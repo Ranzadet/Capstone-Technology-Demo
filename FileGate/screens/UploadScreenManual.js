@@ -3,12 +3,13 @@ import React, { useState, useEffect } from 'react'
 import { useStateWithCallbackLazy } from 'use-state-with-callback'
 import * as ImagePicker from 'expo-image-picker'
 import { firebase } from '../config'
-import {doc, setDoc} from 'firebase/firestore'
+import {doc, setDoc, updateDoc, getDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 // import datetimepicker from '@react-native-community/datetimepicker'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 // import { get } from 'jquery'
+import {userinfo} from './LoginScreen'
 
 const UploadScreenManual = () => {
     const [image, setImage] = useState(null);
@@ -19,6 +20,7 @@ const UploadScreenManual = () => {
     const [filepath, setFilepath] = useState('')
     // const [weather, setWeather] = useState([])
     // const [weatherIsUpdated, setWeatherIsUpdated] = useState(false)
+    const [userPass, setUserPass] = useState('')
     const [weather, setWeather] = useState([]);
     
     const [latitude, setLatitude] = useState(null);
@@ -116,16 +118,23 @@ const UploadScreenManual = () => {
         //console.log(result.assets);
 
         /* METADATA */
+        console.log("Userid: ", userinfo.userID);
+        console.log("Email: ", userinfo.email);
+        console.log("Password: ", userinfo.password);
         const assets = result.assets[0]
         const duration = assets.duration
-        let filExIndex = assets.uri.search(/\..../);
+        let filExIndex = assets.uri.search(/\..*/);
         const fileExtension = assets.uri.slice(filExIndex);
         const date = assets.exif.DateTimeOriginal;
         const uploadtime = new Date().toDateString();
         const size = assets.fileSize;
-        const latitude = assets.exif.GPSLatitude;
+        let latitude = assets.exif.GPSLatitude;
+        const latitudeSign = assets.exif.GPSLatitudeRef;
+        if (latitudeSign == 'S')
+            latitude = -latitude;
         let longitude = assets.exif.GPSLongitude;
-        if (longitude > 0)
+        const longitudeSign = assets.exif.GPSLongitudeRef;
+        if (longitudeSign == 'W')
             longitude = -longitude;
         
         console.log(assets)
@@ -148,8 +157,10 @@ const UploadScreenManual = () => {
         // metadata.longitude = longitude;
         setMetadata({duration: duration, fileExtension:fileExtension, date:date, latitude:latitude, longitude:longitude, size:size});
         setUploadTime(uploadtime);
-        setUploader("");
-        setFilepath(assets.uri);
+        setUploader(userinfo.userID);
+        setUserPass(userinfo.password);
+        console.log("New uploader: ", uploader)
+        setFilepath(assets.uri.substring(assets.uri.lastIndexOf('/') + 1));
 
         function delay(time) {
             return new Promise(resolve => setTimeout(resolve, time));
@@ -177,12 +188,15 @@ const UploadScreenManual = () => {
 
         try {
             await ref;
+            console.log("ref: " + ref.snapshot);
             
             // await storageRef;
         } catch (e) {
             console.log(e);
         }
         try{
+            console.log(metadata);
+            console.log(filepath);
             // setWeatherIsUpdated(false);
             const mseconds = String(Date.now());
             const name = String(uploadTime + "_" + mseconds);
@@ -194,7 +208,7 @@ const UploadScreenManual = () => {
             //         uploadTime: uploadTime, uploader: uploader, 
             //         weather: weather});
             // });
-            await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
+            await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
                 uploadTime: uploadTime, uploader: uploader, 
                 weather: weatherList});
             // while (!weatherIsUpdated) {
@@ -202,6 +216,21 @@ const UploadScreenManual = () => {
             //     console.log("Delaying 1 second...")
             // }
             // setWeatherIsUpdated(false);
+            const uid = String(userinfo.userID);
+            const docRef = doc(db, "Userinfo", uid);
+            const docSnap = await getDoc(docRef);
+            let count = 0;
+            
+            if (docSnap.exists()) {
+                console.log("Upload count (previous):", docSnap.data().uploadCount);
+                count = docSnap.data().uploadCount;
+            } else {
+            // doc.data() will be undefined in this case
+            }
+            //Update the uploaded document counter for user
+            await updateDoc(docRef, {
+                uploadCount: count + 1
+            });
         }
         catch(e){
             console.log(e);
@@ -407,19 +436,36 @@ const UploadScreenManual = () => {
     
     return (
         <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
-                <Text style={styles.textStyle}>
-                    Pick an image
-                </Text>
-            </TouchableOpacity>
-            <View style={styles.container}>
-                {image && <Image source={{uri: image.uri}} style={{width: 200, height: 200}}></Image>}
-                <TouchableOpacity style={styles.buttonStyle} onPress={uploadImage}>
-                    <Text style={styles.textStyle}>
-                        Upload
-                    </Text>
-                </TouchableOpacity>
-            </View>
+            {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Upload Screen</Text>
+      </View>
+
+      {/* Image Preview */}
+      <View style={styles.imagePreviewContainer}>
+        {image ? (
+          <Image source={image} style={styles.imagePreview} />
+        ) : (
+          <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
+            <Text style={styles.imagePickerButtonText}>Pick an image</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* Upload Button */}
+      <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!image}>
+      <Text style={styles.uploadButtonText}>Upload</Text>
+      </TouchableOpacity>
+
+      {/* Uploading Indicator */}
+        {uploading && (
+          <View style={styles.uploadingIndicator}>
+            <Text style={styles.uploadingText}>Uploading...</Text>
+          </View>
+        )}
+
+
+
             <View style={styles.container}>
                 <TextInput
                     placeholder="Latitude"
@@ -466,38 +512,72 @@ export default UploadScreenManual;
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      padding: 16,
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
     },
-    titleText: {
-      fontSize: 22,
-      fontWeight: 'bold',
-      textAlign: 'center',
-      paddingVertical: 20,
+    header: {
+    width: '100%',
+    height: 60,
+    backgroundColor: '#008080',
+    alignItems: 'center',
+    justifyContent: 'center',
     },
-    textStyle: {
-      backgroundColor: '#fff',
-      fontSize: 15,
-      marginTop: 16,
-      color: 'black',
+    title: {
+    fontSize: 24,
+    color: '#fff',
     },
-    buttonStyle: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      backgroundColor: '#DDDDDD',
-      padding: 5,
+    imagePreviewContainer: {
+    width: '90%',
+    height: '50%',
+    marginTop: 20,
+    marginBottom: 20,
+    borderWidth: 2,
+    borderColor: '#008080',
+    alignItems: 'center',
+    justifyContent: 'center',
     },
-    imageIconStyle: {
-      height: 20,
-      width: 20,
-      resizeMode: 'stretch',
+    imagePreview: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
     },
-    input: {
-      backgroundColor: 'white',
-      paddingHorizontal: 15,
-      paddingVertical: 10,
-      borderRadius: 10,
-      marginTop: 5,
-  }
-});  
+    imagePickerButton: {
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    },
+    imagePickerButtonText: {
+    fontSize: 20,
+    color: '#008080',
+    },
+    uploadButton: {
+    width: '80%',
+    height: 50,
+    backgroundColor: '#008080',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    borderRadius: 10,
+    },
+    uploadButtonText: {
+    fontSize: 20,
+    color: '#fff',
+    },
+    uploadingIndicator: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    },
+    uploadingText: {
+    fontSize: 20,
+    color: '#fff',
+    },
+  });
