@@ -105,6 +105,8 @@ const HomeScreen = () => {
         <TouchableOpacity onPress={handleSignOut} style={[styles.button, styles.signOutButton]}>
           <Text style={[styles.buttonText, styles.signOutButtonText]}>Sign Out</Text>
         </TouchableOpacity>
+      </View>
+      <View style={styles.buttonsContainer}>
         <TouchableOpacity
           onPress={() => {
             navigation.navigate('UploadScreen');
@@ -140,12 +142,12 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    width: '100%',
+    width: '100%'
   },
   button: {
     borderRadius: 10,
     paddingVertical: 15,
-    paddingHorizontal: 50,
+    paddingHorizontal: 35,
     marginTop: 20,
   },
   signOutButton: {
