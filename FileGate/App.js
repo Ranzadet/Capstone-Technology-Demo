@@ -30,7 +30,6 @@ export default function App() {
   
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
         <Stack.Screen name="Login" component={LoginScreen}/>
         <Stack.Screen name="ResetPassword" component={ResetPassword}/>
         <Stack.Screen name="Signup" component={SignupScreen}/>
@@ -39,6 +38,7 @@ export default function App() {
         {/* <Stack.Screen name="FileUpload" component={FileUpload} />
         <Stack.Screen name="FileUpload2" component={FileUpload2} /> */}
         <Stack.Screen name="UploadScreen" component={UploadScreen} />
+        <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
