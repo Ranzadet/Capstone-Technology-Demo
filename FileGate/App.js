@@ -8,6 +8,7 @@ import HomeScreen from './screens/HomeScreen'
 // import FileUpload from './screens/FileUpload'
 // import FileUpload2 from './screens/FileUpload2'
 import UploadScreen from './screens/UploadScreen'
+import UploadScreenManual from './screens/UploadScreenManual'
 import DownloadScreen from './screens/DownloadScreen'
 import SignupScreen from './screens/Signup'
 import ResetPassword from './screens/ResetPassword'
@@ -38,6 +39,7 @@ export default function App() {
         {/* <Stack.Screen name="FileUpload" component={FileUpload} />
         <Stack.Screen name="FileUpload2" component={FileUpload2} /> */}
         <Stack.Screen name="UploadScreen" component={UploadScreen} />
+        <Stack.Screen name="UploadScreenManual" component={UploadScreenManual} />
         <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
       </Stack.Navigator>
     </NavigationContainer>

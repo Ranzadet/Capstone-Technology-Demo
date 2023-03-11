@@ -186,97 +186,105 @@ const HomeScreen = () => {
   };
   
   return (
-  <View style={styles.container}>
-  <View style={styles.header}>
-  <Text style={styles.logo}> FileGate </Text>
-  </View>
-  <Text style={styles.email}>Welcome, {auth.currentUser?.email}!</Text>
-  <View style={styles.buttonsContainer}>
-  <TouchableOpacity onPress={handleSignOut} style={[styles.button, styles.signOutButton]}>
-  <Text style={[styles.buttonText, styles.signOutButtonText]}>Sign Out</Text>
-  </TouchableOpacity>
-  <TouchableOpacity
-  onPress={() => {
-  navigation.navigate('UploadScreen');
-  }}
-  style={[styles.button, styles.uploadButton]}
-  >
-  <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
-  </TouchableOpacity>
-  <TouchableOpacity
-  onPress={() => {
-  navigation.navigate('DownloadScreen');
-  }}
-  style={styles.button}
-  >
-  <Text style={styles.buttonText}>Download Files</Text>
-  </TouchableOpacity>
-  </View>
-  </View>
-  );
-  };
+    <View style={styles.container}>
+    <View style={styles.header}>
+    <Text style={styles.logo}> FileGate </Text>
+    </View>
+    <Text style={styles.email}>Welcome, {auth.currentUser?.email}!</Text>
+    <View style={styles.buttonsContainer}>
+    <TouchableOpacity onPress={handleSignOut} style={[styles.button, styles.signOutButton]}>
+    <Text style={[styles.buttonText, styles.signOutButtonText]}>Sign Out</Text>
+    </TouchableOpacity>
+    <TouchableOpacity
+    onPress={() => {
+    navigation.navigate('UploadScreen');
+    }}
+    style={[styles.button, styles.uploadButton]}
+    >
+    <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
+    </TouchableOpacity>
+    <TouchableOpacity
+    onPress={() => {
+    navigation.navigate('DownloadScreen');
+    }}
+    style={styles.button}
+    >
+    <Text style={styles.buttonText}>Download Files</Text>
+    </TouchableOpacity>
+    </View>
+    <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('UploadScreenManual');
+          }}
+          style={[styles.button, styles.uploadButton]}
+        >
+          <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Manual</Text>
+        </TouchableOpacity>
+    </View>
+    );
+    };
   
-  const styles = StyleSheet.create({
-  container: {
-  flex: 1,
-  backgroundColor: '#fff',
-  },
-  header: {
-  backgroundColor: '#6646ee',
-  flexDirection: 'row',
-  alignItems: 'center',
-  justifyContent: 'center',
-  height: 80,
-  borderBottomWidth: 1,
-  borderBottomColor: '#ccc',
-  },
-  logo: {
-  color: '#fff',
-  fontSize: 24,
-  fontWeight: 'bold',
-  },
-  email: {
-  fontSize: 20,
-  fontWeight: 'bold',
-  marginTop: 30,
-  marginBottom: 20,
-  textAlign: 'center',
-  },
-  buttonsContainer: {
-  flexDirection: 'column',
-  justifyContent: 'center',
-  alignItems: 'center',
-  },
-  button: {
-  borderRadius: 10,
-  paddingVertical: 15,
-  paddingHorizontal: 50,
-  marginVertical: 10,
-  width: '80%',
-  alignItems: 'center',
-  justifyContent: 'center',
-  backgroundColor: '#fff',
-  borderWidth: 1,
-  borderColor: '#0782F9',
-  },
-  signOutButton: {
-  backgroundColor: '#FF6347',
-  borderColor: '#FF6347',
-  },
-  signOutButtonText: {
-  color: '#fff',
-  },
-  uploadButton: {
-  backgroundColor: '#0782F9',
-  borderColor: '#0782F9',
-  },
-  uploadButtonText: {
-  color: '#fff',
-  },
-  buttonText: {
-  fontWeight: '700',
-  fontSize: 16,
-  },
-  });
-  
-  export default HomeScreen;
+    const styles = StyleSheet.create({
+      container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      },
+      header: {
+      backgroundColor: '#6646ee',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: 80,
+      borderBottomWidth: 1,
+      borderBottomColor: '#ccc',
+      },
+      logo: {
+      color: '#fff',
+      fontSize: 24,
+      fontWeight: 'bold',
+      },
+      email: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginTop: 30,
+      marginBottom: 20,
+      textAlign: 'center',
+      },
+      buttonsContainer: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      },
+      button: {
+      borderRadius: 10,
+      paddingVertical: 15,
+      paddingHorizontal: 50,
+      marginVertical: 10,
+      width: '80%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#fff',
+      borderWidth: 1,
+      borderColor: '#0782F9',
+      },
+      signOutButton: {
+      backgroundColor: '#FF6347',
+      borderColor: '#FF6347',
+      },
+      signOutButtonText: {
+      color: '#fff',
+      },
+      uploadButton: {
+      backgroundColor: '#0782F9',
+      borderColor: '#0782F9',
+      },
+      uploadButtonText: {
+      color: '#fff',
+      },
+      buttonText: {
+      fontWeight: '700',
+      fontSize: 16,
+      },
+      });
+      
+      export default HomeScreen;
