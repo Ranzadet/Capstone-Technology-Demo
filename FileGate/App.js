@@ -5,10 +5,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen'
 import {userinfo} from './screens/LoginScreen'
 import HomeScreen from './screens/HomeScreen'
-import FileUpload from './screens/FileUpload'
-import FileUpload2 from './screens/FileUpload2'
+// import FileUpload from './screens/FileUpload'
+// import FileUpload2 from './screens/FileUpload2'
 import UploadScreen from './screens/UploadScreen'
 import DownloadScreen from './screens/DownloadScreen'
+import SignupScreen from './screens/Signup'
+import ResetPassword from './screens/ResetPassword'
 const Stack = createNativeStackNavigator();
 
 // export default function App() {
@@ -24,13 +26,18 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+  // <Providers />; 
+  
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
         <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
+        <Stack.Screen name="Login" component={LoginScreen}/>
+        <Stack.Screen name="ResetPassword" component={ResetPassword}/>
+        <Stack.Screen name="Signup" component={SignupScreen}/>
+        {/* <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} /> */}
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="FileUpload" component={FileUpload} />
-        <Stack.Screen name="FileUpload2" component={FileUpload2} />
+        {/* <Stack.Screen name="FileUpload" component={FileUpload} />
+        <Stack.Screen name="FileUpload2" component={FileUpload2} /> */}
         <Stack.Screen name="UploadScreen" component={UploadScreen} />
       </Stack.Navigator>
     </NavigationContainer>

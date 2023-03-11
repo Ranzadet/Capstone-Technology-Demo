@@ -7,8 +7,6 @@ import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
 
-``
-
 const UploadScreen = () => {
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
@@ -142,62 +140,109 @@ const UploadScreen = () => {
         setImage(null);
     };
 
-    
-    return (
-        <SafeAreaView style={styles.container}>
-            <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
-                <Text style={styles.textStyle}>
-                    Pick an image
-                </Text>
-            </TouchableOpacity>
-            <View style={styles.container}>
-                {image && <Image source={{uri: image.uri}} style={{width: 300, height: 300}}></Image>}
-                <TouchableOpacity style={styles.buttonStyle} onPress={uploadImage}>
-                    <Text style={styles.textStyle}>
-                        Upload
-                    </Text>
-                </TouchableOpacity>
-            </View>
-        </SafeAreaView>
-    )
-}
+  return (
+    <SafeAreaView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Upload Screen</Text>
+      </View>
 
-export default UploadScreen;
+      {/* Image Preview */}
+      <View style={styles.imagePreviewContainer}>
+        {image ? (
+          <Image source={image} style={styles.imagePreview} />
+        ) : (
+          <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
+            <Text style={styles.imagePickerButtonText}>Pick an image</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      {/* Upload Button */}
+      <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!image}>
+<Text style={styles.uploadButtonText}>Upload</Text>
+</TouchableOpacity>
+
+ {/* Uploading Indicator */}
+  {uploading && (
+    <View style={styles.uploadingIndicator}>
+      <Text style={styles.uploadingText}>Uploading...</Text>
+    </View>
+  )}
+</SafeAreaView>
+);
+};
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      padding: 16,
-    },
-    titleText: {
-      fontSize: 22,
-      fontWeight: 'bold',
-      textAlign: 'center',
-      paddingVertical: 20,
-    },
-    textStyle: {
-      backgroundColor: '#fff',
-      fontSize: 15,
-      marginTop: 16,
-      color: 'black',
-    },
-    buttonStyle: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      backgroundColor: '#DDDDDD',
-      padding: 5,
-    },
-    imageIconStyle: {
-      height: 20,
-      width: 20,
-      resizeMode: 'stretch',
-    },
-    input: {
-      backgroundColor: 'white',
-      paddingHorizontal: 15,
-      paddingVertical: 10,
-      borderRadius: 10,
-      marginTop: 5,
-  }
-});  
+container: {
+flex: 1,
+backgroundColor: '#fff',
+alignItems: 'center',
+justifyContent: 'center',
+},
+header: {
+width: '100%',
+height: 60,
+backgroundColor: '#008080',
+alignItems: 'center',
+justifyContent: 'center',
+},
+title: {
+fontSize: 24,
+color: '#fff',
+},
+imagePreviewContainer: {
+width: '90%',
+height: '50%',
+marginTop: 20,
+marginBottom: 20,
+borderWidth: 2,
+borderColor: '#008080',
+alignItems: 'center',
+justifyContent: 'center',
+},
+imagePreview: {
+width: '100%',
+height: '100%',
+resizeMode: 'contain',
+},
+imagePickerButton: {
+width: '100%',
+height: '100%',
+alignItems: 'center',
+justifyContent: 'center',
+},
+imagePickerButtonText: {
+fontSize: 20,
+color: '#008080',
+},
+uploadButton: {
+width: '80%',
+height: 50,
+backgroundColor: '#008080',
+alignItems: 'center',
+justifyContent: 'center',
+marginTop: 20,
+borderRadius: 10,
+},
+uploadButtonText: {
+fontSize: 20,
+color: '#fff',
+},
+uploadingIndicator: {
+position: 'absolute',
+top: 0,
+bottom: 0,
+left: 0,
+right: 0,
+backgroundColor: 'rgba(0, 0, 0, 0.5)',
+alignItems: 'center',
+justifyContent: 'center',
+},
+uploadingText: {
+fontSize: 20,
+color: '#fff',
+},
+});
+
+export default UploadScreen;
