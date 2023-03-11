@@ -105,6 +105,12 @@ const HomeScreen = () => {
         <TouchableOpacity onPress={handleSignOut} style={[styles.button, styles.signOutButton]}>
           <Text style={[styles.buttonText, styles.signOutButtonText]}>Sign Out</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {navigation.navigate("DownloadScreen")}}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Download files</Text>
+        </TouchableOpacity>
       </View>
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
@@ -116,10 +122,12 @@ const HomeScreen = () => {
           <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          onPress={() => {navigation.navigate("DownloadScreen")}}
-          style={styles.button}
+          onPress={() => {
+            navigation.navigate('UploadScreenManual');
+          }}
+          style={[styles.button, styles.uploadButton]}
         >
-          <Text style={styles.buttonText}>Download files</Text>
+          <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Manual</Text>
         </TouchableOpacity>
       </View>
     </View>

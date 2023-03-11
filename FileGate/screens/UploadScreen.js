@@ -7,7 +7,7 @@ import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
 
-const UploadScreen = () => {
+const UploadScreenMetadata = () => {
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [metadata, setMetadata] = useState({})
@@ -147,6 +147,9 @@ const UploadScreen = () => {
         <Text style={styles.title}>Upload Screen</Text>
       </View>
 
+<<<<<<< HEAD:FileGate/screens/UploadScreenMetadata.js
+export default UploadScreenMetadata;
+=======
       {/* Image Preview */}
       <View style={styles.imagePreviewContainer}>
         {image ? (
@@ -172,6 +175,7 @@ const UploadScreen = () => {
 </SafeAreaView>
 );
 };
+>>>>>>> main:FileGate/screens/UploadScreen.js
 
 const styles = StyleSheet.create({
 container: {
