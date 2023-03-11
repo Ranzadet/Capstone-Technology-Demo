@@ -38,7 +38,6 @@
 //     )
 // }
 
-// export default HomeScreen
 
 // const styles = StyleSheet.create({
 //     container: {
@@ -113,6 +112,12 @@ const HomeScreen = () => {
           style={[styles.button, styles.uploadButton]}
         >
           <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {navigation.navigate("DownloadScreen")}}
+          style={styles.button}
+        >
+          <Text style={styles.buttonText}>Download files</Text>
         </TouchableOpacity>
       </View>
     </View>

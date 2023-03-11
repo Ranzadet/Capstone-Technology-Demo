@@ -3,10 +3,12 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen'
+import {userinfo} from './screens/LoginScreen'
 import HomeScreen from './screens/HomeScreen'
 // import FileUpload from './screens/FileUpload'
 // import FileUpload2 from './screens/FileUpload2'
 import UploadScreen from './screens/UploadScreen'
+import DownloadScreen from './screens/DownloadScreen'
 import SignupScreen from './screens/Signup'
 import ResetPassword from './screens/ResetPassword'
 const Stack = createNativeStackNavigator();
@@ -21,12 +23,14 @@ const Stack = createNativeStackNavigator();
 //   );
 // }
 
+
 export default function App() {
   return (
   // <Providers />; 
   
     <NavigationContainer>
       <Stack.Navigator>
+        <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
         <Stack.Screen name="Login" component={LoginScreen}/>
         <Stack.Screen name="ResetPassword" component={ResetPassword}/>
         <Stack.Screen name="Signup" component={SignupScreen}/>

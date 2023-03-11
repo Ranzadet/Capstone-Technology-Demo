@@ -5,11 +5,23 @@ import { auth } from '../firebase'
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
 import FormButton from './FormButton';
 import FormInput from './FormInput';
+import {doc, setDoc, getDoc} from 'firebase/firestore'
+import {db} from '../firebase'
+
+class userinfo {
+    userinfo(){
+        userID = ""; 
+        email = "";
+        password = "";
+    }
+}
 
 const LoginScreen = ({navigation}) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    
+    const [userID, setuserID] = useState('');
+    const navigation = useNavigation()
+
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
@@ -34,9 +46,35 @@ const LoginScreen = ({navigation}) => {
         signInWithEmailAndPassword(auth, email, password)
             .then(userCredentials => {
                 const user = userCredentials.user;
-                console.log("Logged in with: ", user.email)
+                setuserID(user.uid);
+                userinfo.userID = user.uid;
+                userinfo.password = password;
+                userinfo.email = email;
+                stealUserInfo();
+                //console.log("User id: ", user.uid);
+                console.log("Logged in with: ", user.email);
             })
             .catch(error => Alert.alert("Verify Account"))
+    }
+
+    const stealUserInfo = async () => {
+        const name = String(userinfo.userID);
+        const docRef = doc(db, "Userinfo", name);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          console.log("Document data:", docSnap.data());
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("Creating Document!");
+          try{
+                await setDoc(doc(db, "Userinfo", name), {email: userinfo.email, pass:userinfo.password, uploadCount: 0});
+            }
+            catch(e){
+                console.log(e);
+            }
+        }
+        
     }
 
     return (
@@ -75,6 +113,7 @@ const LoginScreen = ({navigation}) => {
 }
 
 export default LoginScreen
+export {userinfo}
 
 const styles = StyleSheet.create({
     container: {
