@@ -1,2 +1,2 @@
 # Capstone-Technology-Demo
-Testing our tech stack for our senior computer science capstone class. AKA "The Plumbing Project"
+A Mobile application developed using React-Native in Javascript. This application allows researchers to upload photos and videos from their phone to a research database along with associated metadata such as time, duration, and geographic coordinate location. The app can then use the location data associated with each photo to fetch historical weather data from local stations to aid machine learning researchers in ecological regression analysis of avian wildlife behavior. 

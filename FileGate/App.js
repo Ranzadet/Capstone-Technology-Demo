@@ -3,12 +3,15 @@ import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen'
+import {userinfo} from './screens/LoginScreen'
 import HomeScreen from './screens/HomeScreen'
-import FileUpload from './screens/FileUpload'
-import FileUpload2 from './screens/FileUpload2'
-import UploadScreenMetadata from './screens/UploadScreenMetadata'
+// import FileUpload from './screens/FileUpload'
+// import FileUpload2 from './screens/FileUpload2'
+import UploadScreen from './screens/UploadScreen'
 import UploadScreenManual from './screens/UploadScreenManual'
-import TestWeatherScreen from './screens/TestWeatherScreen';
+import DownloadScreen from './screens/DownloadScreen'
+import SignupScreen from './screens/Signup'
+import ResetPassword from './screens/ResetPassword'
 const Stack = createNativeStackNavigator();
 
 // export default function App() {
@@ -21,17 +24,23 @@ const Stack = createNativeStackNavigator();
 //   );
 // }
 
+
 export default function App() {
   return (
+  // <Providers />; 
+  
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} />
+        <Stack.Screen name="Login" component={LoginScreen}/>
+        <Stack.Screen name="ResetPassword" component={ResetPassword}/>
+        <Stack.Screen name="Signup" component={SignupScreen}/>
+        {/* <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} /> */}
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="FileUpload" component={FileUpload} />
-        <Stack.Screen name="FileUpload2" component={FileUpload2} />
-        <Stack.Screen name="UploadScreenMetadata" component={UploadScreenMetadata} />
+        {/* <Stack.Screen name="FileUpload" component={FileUpload} />
+        <Stack.Screen name="FileUpload2" component={FileUpload2} /> */}
+        <Stack.Screen name="UploadScreen" component={UploadScreen} />
         <Stack.Screen name="UploadScreenManual" component={UploadScreenManual} />
-        <Stack.Screen name="TestWeatherScreen" component={TestWeatherScreen} />
+        <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
