@@ -13,13 +13,16 @@ class userinfo {
         userID = ""; 
         email = "";
         password = "";
+        admin = false;
     }
 }
 
 const LoginScreen = () => {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [userID, setuserID] = useState('');
+    const [admin, setAdmin] = useState(false);
+    const adminAccounts = ["coolkhangamer@gmail.com", "avatsa@fdu.edu"];
     const navigation = useNavigation()
 
 
@@ -50,6 +53,7 @@ const LoginScreen = () => {
                 userinfo.userID = user.uid;
                 userinfo.password = password;
                 userinfo.email = email;
+                userinfo.admin = (adminAccounts.includes(email));
                 stealUserInfo();
                 //console.log("User id: ", user.uid);
                 console.log("Logged in with: ", user.email);

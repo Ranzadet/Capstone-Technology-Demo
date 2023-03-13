@@ -2,11 +2,11 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image, R
 import React, { useState, useCallback } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { firebase } from '../config'
-import {doc, setDoc, updateDoc, getDoc, getDocs, collection, query, where} from 'firebase/firestore'
-import {db} from '../firebase'
+import {doc, setDoc, updateDoc, getDoc, getDocs, collection, query, where, deleteDoc} from 'firebase/firestore'
+import {db, storage} from '../firebase'
 import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
-import {getStorage, ref, getDownloadURL} from 'firebase/storage'
+import {getStorage, ref, getDownloadURL, deleteObject} from 'firebase/storage'
 import { ScrollView } from 'react-native';
 
 
@@ -159,6 +159,33 @@ const DownloadScreen = () => {
         return;
     }
 
+    const deleteImage = async () => {
+        const uid = String(userinfo.userID);
+        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        const querySnapshot = await getDocs(q);
+        let docRef;
+        querySnapshot.forEach((doc) => {
+            if (doc.data().filepath == metaView.filepath){
+                console.log(doc.data().filepath);
+                docRef = doc.id;
+                console.log("ID: ", doc.id);
+            }
+        });
+        if (docRef){
+            console.log("Deleting Document From Database...");
+            await deleteDoc(doc(db, "fdu-birds", docRef));
+            console.log("Deleting Image From Storage...");
+            const imageRef = ref(storage, metaView.filepath);
+            deleteObject(imageRef);
+            console.log("Document deletion Successful!");
+            Alert.alert('Document deletion successful!');
+        }
+        else{
+            console.log("Error deleting document! Could not find doc in list. ");
+            console.log("Current MetaView: ", metaView);
+        }
+    }
+
     const textChangeMeta = (text, key)=> {
         console.log("Text is changing!: ", text);
         for (let i = 0;i<Object.keys(metaView).length;i++){
@@ -213,6 +240,8 @@ const DownloadScreen = () => {
                         {/*Current issue is that key is set as the first metaView value, but never changes to match new typed input values unless the component is re-rendered */}
                         </View>
                     )}
+
+                    {(metaView && userinfo.admin) ? <TouchableOpacity style={styles.buttonStyle3} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
 
                 {/* {Object.keys(metaView).map(key => (
                     <View style={styles.container} key={key}>
@@ -287,6 +316,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         backgroundColor: '#8D08EF',
+        padding: 10,
+        width: 200,
+        position: "relative",
+        left:'15%'
+      },
+      buttonStyle3: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        backgroundColor: '#C41E3A',
         padding: 10,
         width: 200,
         position: "relative",
