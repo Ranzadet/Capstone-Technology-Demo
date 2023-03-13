@@ -167,8 +167,25 @@ const DownloadScreen = () => {
                 console.log(metaView[Object.keys(metaView)[i]]);
                 console.log("New: ", text);
                 setMetaView(metaView);
-                helpInput[Object.keys(helpInput)[i]] = text;
-                setHelpInput(helpInput);
+                // helpInput[Object.keys(helpInput)[i]] = text;
+                // setHelpInput(helpInput);
+            }
+        }
+    }
+    
+    const textChangeSub = (text, key, subObj)=> {
+        console.log("Text is changing!: ", text);
+        for (let i = 0;i<Object.keys(metaView[key]).length;i++){
+            let bigObj = metaView[Object.keys(metaView)[i]];
+            if(typeof bigObj == "object"){
+                if (Object.keys(bigObj).includes(subObj)){
+                    bigObj[subObj] = text;
+                    console.log(bigObj[subObj]);
+                    console.log("New: ", text);
+                    setMetaView(metaView);
+                    // helpInput[Object.keys(helpInput)[i]] = text;
+                    // setHelpInput(helpInput);
+                }
             }
         }
     }
@@ -181,19 +198,27 @@ const DownloadScreen = () => {
         }>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
                 <View>
-                    {Object.values(metaView).map(key => 
+                    {Object.keys(metaView).map(key => 
                         <View>
-                        <Text>Current value: {typeof key != 'object' && key}</Text>
-                        <TextInput key={key} style={styles.input} defaultValue={String(key)} onSubmitEditing={(value) => {textChangeMeta(value.nativeEvent.text, key)}}></TextInput> 
+                        <Text>{key}:</Text>
+                        {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
+                        onSubmitEditing={(value) => {textChangeMeta(value.nativeEvent.text, key)}}></TextInput>
+                        : Object.keys(metaView[key]).map(subObj => 
+                            <View>
+                                <Text>{subObj}</Text>
+                            <TextInput key={subObj} style={styles.input} defaultValue={String(metaView[key][subObj])} 
+                            onSubmitEditing={(value) => {textChangeSub(value.nativeEvent.text, key, subObj)}}></TextInput>
+                            </View>
+                        )}
                         {/*Current issue is that key is set as the first metaView value, but never changes to match new typed input values unless the component is re-rendered */}
                         </View>
                     )}
 
-                {Object.keys(metaView).map(key => (
+                {/* {Object.keys(metaView).map(key => (
                     <View style={styles.container} key={key}>
                         <Text>{key}: {String(metaView[key])}</Text>
                     </View>
-                ))}
+                ))} */}
                     
                     <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>
                 </View> 
