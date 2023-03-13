@@ -59,21 +59,36 @@ const UploadScreen = () => {
         console.log("Userid: ", userinfo.userID);
         console.log("Email: ", userinfo.email);
         console.log("Password: ", userinfo.password);
+        
         const assets = result.assets[0]
+        console.log(assets)
         const duration = assets.duration
         let filExIndex = assets.uri.search(/\..*/);
         const fileExtension = assets.uri.slice(filExIndex);
-        const date = assets.exif.DateTimeOriginal;
         const uploadtime = new Date().toDateString();
         const size = assets.fileSize;
-        let latitude = assets.exif.GPSLatitude;
-        const latitudeSign = assets.exif.GPSLatitudeRef;
-        if (latitudeSign == 'S')
-            latitude = -latitude;
-        let longitude = assets.exif.GPSLongitude;
-        const longitudeSign = assets.exif.GPSLongitudeRef;
-        if (longitudeSign == 'W')
-            longitude = -longitude;
+
+        let date;
+        let latitude;
+        let longitude;
+
+        if (assets.exif){
+            date = assets.exif.DateTimeOriginal;
+            latitude = assets.exif.GPSLatitude;
+            const latitudeSign = assets.exif.GPSLatitudeRef;
+            if (latitudeSign == 'S')
+                latitude = -latitude;
+            longitude = assets.exif.GPSLongitude;
+            const longitudeSign = assets.exif.GPSLongitudeRef;
+            if (longitudeSign == 'W')
+                longitude = -longitude;
+        }
+        else{
+          date = "NotFound";
+          latitude = "NotFound";
+          longitude = "NotFound";
+        }
+        
         
         console.log(assets)
         console.log("RELEVANT METADATA: ")
@@ -139,7 +154,15 @@ const UploadScreen = () => {
             const mseconds = String(Date.now());
             const name = String(uploadTime + "_" + mseconds);
             
-            const weatherList = await submitForWeather();
+            let weatherList;
+            if(metadata.date != "NotFound"){
+              weatherList = await submitForWeather();
+            }
+            else{
+              weatherList = {};
+            }
+
+            
             // setWeather(weatherList);
             // setWeather(await submitForWeather(), async () => {
             //     console.log("Weather: \n" + weather);
