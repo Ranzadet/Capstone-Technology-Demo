@@ -172,6 +172,7 @@ import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { auth } from '../firebase';
+import { userinfo } from './LoginScreen'
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -196,30 +197,42 @@ const HomeScreen = () => {
     <Text style={[styles.buttonText, styles.signOutButtonText]}>Sign Out</Text>
     </TouchableOpacity>
     <TouchableOpacity
-    onPress={() => {
-    navigation.navigate('UploadScreen');
-    }}
-    style={[styles.button, styles.uploadButton]}
+      onPress={() => {
+        navigation.navigate('UploadScreen');
+      }}
+      style={[styles.button, styles.uploadButton]}
     >
-    <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
+      <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
     </TouchableOpacity>
     <TouchableOpacity
-    onPress={() => {
-    navigation.navigate('DownloadScreen');
-    }}
-    style={styles.button}
+      onPress={() => {
+        navigation.navigate('DownloadScreen');
+      }}
+      style={styles.button}
     >
-    <Text style={styles.buttonText}>Download Files</Text>
+      <Text style={styles.buttonText}>Download Files</Text>
     </TouchableOpacity>
     </View>
     <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('UploadScreenManual');
-          }}
-          style={[styles.button, styles.uploadButton]}
-        >
-          <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Manual</Text>
-        </TouchableOpacity>
+      onPress={() => {
+        navigation.navigate('UploadScreenManual');
+      }}
+      style={[styles.button, styles.uploadButton]}
+    >
+      <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Manual</Text>
+    </TouchableOpacity>
+    <View>
+    {userinfo.admin ? 
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('SyncScreen');
+        }}
+        style={[styles.button, styles.uploadButton]}
+      >
+        <Text style={[styles.buttonText, styles.uploadButtonText]}>Sync Files</Text>
+      </TouchableOpacity> : null
+    }
+    </View>
     </View>
     );
     };

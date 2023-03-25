@@ -12,6 +12,7 @@ import UploadScreenManual from './screens/UploadScreenManual'
 import DownloadScreen from './screens/DownloadScreen'
 import SignupScreen from './screens/Signup'
 import ResetPassword from './screens/ResetPassword'
+import SyncScreen from './screens/SyncScreen';
 const Stack = createNativeStackNavigator();
 
 // export default function App() {
@@ -41,6 +42,7 @@ export default function App() {
         <Stack.Screen name="UploadScreen" component={UploadScreen} />
         <Stack.Screen name="UploadScreenManual" component={UploadScreenManual} />
         <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
+        <Stack.Screen name="SyncScreen" component={SyncScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
