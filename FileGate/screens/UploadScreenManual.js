@@ -515,12 +515,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
+    
     },
     header: {
     width: '100%',
-    height: 60,
-    backgroundColor: '#008080',
+    height: 80,
+    backgroundColor: '#6646ee',
     alignItems: 'center',
     justifyContent: 'center',
     },
