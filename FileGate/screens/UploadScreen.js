@@ -229,6 +229,7 @@ const UploadScreen = () => {
       console.log(e);
     }
 
+<<<<<<< Updated upstream
     try{
       const mseconds = String(Date.now());
       const name = String(uploadTime + "_" + mseconds);
@@ -245,6 +246,106 @@ const UploadScreen = () => {
           temperature: 0,
           windDirection: 0,
           windSpeed: 0
+=======
+    function isDateBetween(dateStr, startStr, endStr) {
+      const date = new Date(dateStr);
+      const start = new Date(startStr);
+      const end = new Date(endStr);
+      return date >= start && date <= end;
+    }
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: ImagePicker.MediaTypeOptions.All,
+          quality: 1,
+        });
+        if (!result.cancelled) {
+          setImage(result);
+        }
+        //console.log(result.assets);
+
+        /* METADATA */
+        console.log("Userid: ", userinfo.userID);
+        console.log("Email: ", userinfo.email);
+        console.log("Password: ", userinfo.password);
+        const assets = result.assets[0]
+        const duration = assets.duration
+        let filExIndex = assets.uri.search(/\..*/);
+        const fileExtension = assets.uri.slice(filExIndex);
+        const date = assets.exif.DateTimeOriginal;
+        const uploadtime = new Date().toDateString();
+        const size = assets.fileSize;
+        let latitude = assets.exif.GPSLatitude;
+        const latitudeSign = assets.exif.GPSLatitudeRef;
+        if (latitudeSign == 'S')
+            latitude = -latitude;
+        let longitude = assets.exif.GPSLongitude;
+        const longitudeSign = assets.exif.GPSLongitudeRef;
+        if (longitudeSign == 'W')
+            longitude = -longitude;
+        
+        console.log(assets)
+        console.log("RELEVANT METADATA: ")
+        // console.log(duration)
+        // console.log(fileExtension)
+        // console.log(date)
+        // console.log(uploadtime)
+        // console.log(size)
+        // console.log(latitude)
+        // console.log(longitude)
+
+        // filepath = assets.uri;
+        // metadata.duration = duration;
+        // metadata.fileExtension = fileExtension;
+        // metadata.date = date;
+        // uploadTime = uploadtime;
+        // metadata.size = size;
+        // metadata.latitude = latitude;
+        // metadata.longitude = longitude;
+        setMetadata({duration: duration, fileExtension:fileExtension, date:date, latitude:latitude, longitude:longitude, size:size});
+        setUploadTime(uploadtime);
+        setUploader(userinfo.userID);
+        setUserPass(userinfo.password);
+        console.log("New uploader: ", uploader)
+        setFilepath(assets.uri.substring(assets.uri.lastIndexOf('/') + 1));
+
+
+        function delay(time) {
+            return new Promise(resolve => setTimeout(resolve, time));
+          }
+          
+        delay(1000).then(() => console.log(''));
+
+        console.log(metadata);
+        console.log("Filepath: ", filepath);
+        console.log("Upload Time: ", uploadTime);
+        console.log("Uploader: ", uploader);
+
+
+        const source = {uri: assets.uri}
+        console.log(source);
+        setImage(source);
+    };
+
+    const uploadImage = async () => {
+      setUploading(true);
+      const response = await fetch(media.uri);
+      const blob = await response.blob();
+      const filename = media.uri.substring(media.uri.lastIndexOf('/') + 1);
+      const storageRef = firebase.storage().ref().child(filename);
+      await storageRef.put(blob);
+      const downloadURL = await storageRef.getDownloadURL();
+      console.log('Media uploaded:', downloadURL);
+
+        try {
+            await ref;
+            console.log("ref: " + ref.snapshot);
+            
+            // await storageRef;
+        } catch (e) {
+            console.log(e);
+>>>>>>> Stashed changes
         }
       });
     }
@@ -266,19 +367,28 @@ const UploadScreen = () => {
 
       {/* Image Preview */}
       <View style={styles.imagePreviewContainer}>
-        {image ? (
-          <Image source={image} style={styles.imagePreview} />
+      {media && (
+        media.type === 'image' ? (
+          <Image source={{ uri: media.uri }} style={{ width: 300, height: 300 }} />
         ) : (
+          <Video source={{ uri: media.uri }} style={{ width: 300, height: 300 }} />
+        )
+      )}
           <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
             <Text style={styles.imagePickerButtonText}>Pick an image</Text>
           </TouchableOpacity>
-        )}
       </View>
 
       {/* Upload Button */}
+<<<<<<< Updated upstream
       <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!image}>
 <Text style={styles.uploadButtonText}>Upload</Text>
 </TouchableOpacity>
+=======
+      <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!media || uploading}>
+      <Text style={styles.uploadButtonText}>Upload</Text>
+      </TouchableOpacity>
+>>>>>>> Stashed changes
 
  {/* Uploading Indicator */}
   {uploading && (
