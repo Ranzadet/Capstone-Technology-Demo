@@ -134,11 +134,14 @@ const UploadScreen = () => {
     };
 
     const uploadImage = async () => {
-        setUploading(true);
-        const response = await fetch(image.uri);
-        const blob = await response.blob();
-        const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
-        var ref = firebase.storage().ref().child(filename).put(blob);
+      setUploading(true);
+      const response = await fetch(image.uri);
+      const blob = await response.blob();
+      const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
+      const storageRef = firebase.storage().ref().child(filename);
+      await storageRef.put(blob);
+      const downloadURL = await storageRef.getDownloadURL();
+      console.log('Media uploaded:', downloadURL);
 
         try {
             await ref;
@@ -387,6 +390,7 @@ const UploadScreen = () => {
       </View>
 
       {/* Image Preview */}
+      
       <View style={styles.imagePreviewContainer}>
         {image ? (
           <Image source={image} style={styles.imagePreview} />
@@ -398,20 +402,18 @@ const UploadScreen = () => {
       </View>
 
       {/* Upload Button */}
-      <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!image}>
+      <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!image || uploading}>
       <Text style={styles.uploadButtonText}>Upload</Text>
       </TouchableOpacity>
-
-      {/* Uploading Indicator */}
-        {uploading && (
-          <View style={styles.uploadingIndicator}>
-            <Text style={styles.uploadingText}>Uploading...</Text>
-          </View>
-        )}
-      </SafeAreaView>
-    );
+ {/* Uploading Indicator */}
+  {uploading && (
+    <View style={styles.uploadingIndicator}>
+      <Text style={styles.uploadingText}>Uploading...</Text>
+    </View>
+  )}
+</SafeAreaView>
+);
 };
-
 
 const styles = StyleSheet.create({
   container: {
