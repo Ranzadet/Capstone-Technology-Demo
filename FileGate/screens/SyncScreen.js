@@ -20,9 +20,11 @@ const SyncScreen = () => {
 
     return (
         // <Button title="Sync" onPress={handleSync}></Button>
-        <TouchableOpacity onPress={handleSync} style={styles.button}>
-            <Text>Sync!</Text>
-        </TouchableOpacity>
+        <View style={styles.container}>
+            <TouchableOpacity onPress={handleSync} style={styles.button}>
+                <Text>Sync!</Text>
+            </TouchableOpacity>
+        </View>
     )
 
 }
@@ -31,6 +33,9 @@ const styles = StyleSheet.create({
     container: {
     flex: 1,
     backgroundColor: '#fff',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     },
     header: {
     backgroundColor: '#6646ee',
