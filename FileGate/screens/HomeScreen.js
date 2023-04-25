@@ -27,7 +27,7 @@ const HomeScreen = () => {
       else {
         setAdminVar(false);
       }
-    }, 10); // Check the value every 1000 milliseconds
+    }, 10); // Check the value every 10 milliseconds
 
     // Clean up the interval when the component is unmounted
     return () => clearInterval(interval);

@@ -7,7 +7,7 @@ import axios from 'axios'
 const SyncScreen = () => {
 
     const handleSync = async () => {
-        const url = 'https://script.google.com/macros/s/AKfycbzVyH_uE7pybFN2i2rZk-_24Uzw6p_T0mGTNDxDYV8jdSmu1BiiX-jkaA9DEHqt3_dD/exec';
+        const url = 'https://script.google.com/macros/s/AKfycbzXhGCmhQ6nEBl6dJ1kn0oJqTCLrqnkc5Hk215nJrHZMhZnxzBObBbBhaBuM0wvD4D0_w/exec';
         try {
             console.log("start sync")
             await axios.post(url);
