@@ -67,6 +67,14 @@ const HomeScreen = () => {
     >
       <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Manual</Text>
     </TouchableOpacity>
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate('UploadScreenCombined');
+      }}
+      style={[styles.button, styles.uploadButton]}
+    >
+      <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Combined</Text>
+    </TouchableOpacity>
     <View>
     {adminVar ? 
       <TouchableOpacity
