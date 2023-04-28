@@ -1,10 +1,12 @@
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, TextInput, Button, Image } from 'react-native'
+import React, { useState, useEffect } from 'react'
 import * as ImagePicker from 'expo-image-picker'
+import { Dialog } from 'react-native-simple-dialogs'
 import { firebase } from '../config'
 import {doc, setDoc, updateDoc, getDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
+import RNDateTimePicker from '@react-native-community/datetimepicker'
 import {userinfo} from './LoginScreen'
 
 const UploadScreenCombined = () => {
@@ -15,6 +17,9 @@ const UploadScreenCombined = () => {
     const [uploader, setUploader] = useState('')
     const [filepath, setFilepath] = useState('')
     const [userPass, setUserPass] = useState('')
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [latitude, setLatitude] = useState(null);
+    const [longitude, setLongitude] = useState(null);
 
     // const requestQueue = []; // an array to store pending requests
     // let isFetching = false; // a flag to track whether a request is currently being fetched
@@ -382,6 +387,30 @@ const UploadScreenCombined = () => {
     return weatherLists;
 }
 
+  const latitudeChanged = (text) => {
+    if (isNumeric(text)) {
+        setLatitude(Number(text));
+        console.log(latitude);
+    }
+  }
+
+  const longitudeChanged = (text) => {
+    if (isNumeric(text)) {
+        setLongitude(Number(text));
+        console.log(longitude);
+    }
+  }
+
+  function isNumeric(str) {
+    if (typeof str != "string") return false // we only process strings!  
+    return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+           !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+  }
+
+  const makeDialogVisible = () => {
+    setDialogVisible(true);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -402,17 +431,41 @@ const UploadScreenCombined = () => {
 
       {/* Upload Button */}
       <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!image}>
-      <Text style={styles.uploadButtonText}>Upload</Text>
+        <Text style={styles.uploadButtonText}>Upload</Text>
       </TouchableOpacity>
 
       {/* Uploading Indicator */}
-        {uploading && (
-          <View style={styles.uploadingIndicator}>
-            <Text style={styles.uploadingText}>Uploading...</Text>
+      {uploading && (
+        <View style={styles.uploadingIndicator}>
+          <Text style={styles.uploadingText}>Uploading...</Text>
+        </View>
+      )}
+
+      <TouchableOpacity style={styles.uploadButton} onPress={makeDialogVisible}>
+        <Text style={styles.uploadButtonText}>Dialog</Text>
+      </TouchableOpacity>
+      
+      <Dialog
+        visible={dialogVisible}
+        title="Custom Dialog"
+        onTouchOutside={() => setDialogVisible(false)}>
+          <View>
+            <TextInput
+              placeholder="Latitude"
+              value={latitude}
+              onChangeText={latitudeChanged}
+              style={styles.imagePickerButtonText}
+            />
+            <TextInput
+              placeholder="Longitude"
+              value={longitude}
+              onChangeText={longitudeChanged}
+              style={styles.imagePickerButtonText}
+            />
           </View>
-        )}
-      </SafeAreaView>
-    );
+      </Dialog>
+    </SafeAreaView>
+  );
 };
 
 
