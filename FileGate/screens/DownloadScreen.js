@@ -23,6 +23,7 @@ const DownloadScreen = () => {
     const [helpInput, setHelpInput] = useState({});
     const [uploadData, setUploadData] = useState({});
     let renderCount = 0;
+    const [downloadCount, setDownloadCount] = useState(false);
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -44,8 +45,14 @@ const DownloadScreen = () => {
         const storage = getStorage();
         const count = docSnap0.data().uploadCount;
         
+        let q;
+        if (!userinfo.admin)
+            q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        else{
+            q = query(collection(db, "fdu-birds"));
+        }
+        // const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
 
-        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
         const querySnapshot = await getDocs(q);
         console.log(querySnapshot.size);
         let i = 1;
@@ -74,6 +81,7 @@ const DownloadScreen = () => {
                     newImages2.push(url);
                     newImageCheck.push(doc.data().filepath);
                     console.log(url);
+                    setDownloadCount(e => e+1);
                     // Insert url into an <img> tag to "download"
                 })
                 .catch((error) => {console.log(error)})
@@ -225,9 +233,9 @@ const DownloadScreen = () => {
         }>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
                 <View>
-                    {Object.keys(metaView).map(key => 
+                    {downloadCount == userinfo.uploadCount && Object.keys(metaView).map(key => 
                         <View>
-                        <Text>{key}:</Text>
+                        <Text>{downloaded}{key}:</Text>
                         {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
                         onSubmitEditing={(value) => {textChangeMeta(value.nativeEvent.text, key)}}></TextInput>
                         : Object.keys(metaView[key]).map(subObj => 

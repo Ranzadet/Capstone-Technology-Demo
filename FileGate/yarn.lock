@@ -11149,6 +11149,16 @@
   dependencies:
     "invariant" "^2.2.4"
 
+"react-native-exif@^0.5.0":
+  "integrity" "sha512-nt8JY1QhM3EE86Wk+IusJ8J37c3ecdRETlF5g/SFKmAt3E+vnQmWwWyuLNtJux/f1zBJXhQ9Dvb43BYfu8w2yQ=="
+  "resolved" "https://registry.npmjs.org/react-native-exif/-/react-native-exif-0.5.0.tgz"
+  "version" "0.5.0"
+
+"react-native-get-location@^3.0.1":
+  "integrity" "sha512-yfb7j++upbrBvIqgN2U6qOcBuwRh7kaOJfTH4ShN3ZXoMKeDk0PLNStg1C0Co+N+LVehHlQJdazFZJAmabazaw=="
+  "resolved" "https://registry.npmjs.org/react-native-get-location/-/react-native-get-location-3.0.1.tgz"
+  "version" "3.0.1"
+
 "react-native-gradle-plugin@^0.70.3":
   "integrity" "sha512-oOanj84fJEXUg9FoEAQomA8ISG+DVIrTZ3qF7m69VQUJyOGYyDZmPqKcjvRku4KXlEH6hWO9i4ACLzNBh8gC0A=="
   "resolved" "https://registry.npmjs.org/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.3.tgz"
@@ -11158,6 +11168,11 @@
   "integrity" "sha512-3h9PrA1dQ84rVeipzQE4eWTELvflSHNtJZN6rz7NkZyaxo9YZV8H/TswBpHwiS5YWlyu+zlLzSoWVa1opSu7GA=="
   "resolved" "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-4.10.2.tgz"
   "version" "4.10.2"
+
+"react-native-media-meta@^0.0.11":
+  "integrity" "sha512-8pZA7wCoscLFJZRwd8GAYwsiuwc2XTYDcZm3cp9SN2wnKTnE2n1AW4AvBu0LGc1hyHYGLKPN4MJ6st0rY7H1vA=="
+  "resolved" "https://registry.npmjs.org/react-native-media-meta/-/react-native-media-meta-0.0.11.tgz"
+  "version" "0.0.11"
 
 "react-native-modal@^13.0.1":
   "integrity" "sha512-UB+mjmUtf+miaG/sDhOikRfBOv0gJdBU2ZE1HtFWp6UixW9jCk/bhGdHUgmZljbPpp0RaO/6YiMmQSSK3kkMaw=="
@@ -11193,7 +11208,7 @@
     "postcss-value-parser" "^4.2.0"
     "styleq" "^0.1.2"
 
-"react-native@*", "react-native@>=0.65.0", "react-native@0.70.5":
+"react-native@*", "react-native@>=0.60", "react-native@>=0.65.0", "react-native@0.70.5":
   "integrity" "sha512-5NZM80LC3L+TIgQX/09yiyy48S73wMgpIgN5cCv3XTMR394+KpDI3rBZGH4aIgWWuwijz31YYVF5504+9n2Zfw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.70.5.tgz"
   "version" "0.70.5"
