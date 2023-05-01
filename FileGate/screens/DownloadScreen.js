@@ -136,7 +136,7 @@ const DownloadScreen = () => {
 
     const uploadImage = async () =>{
         const uid = String(userinfo.userID);
-        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        const q = query(collection(db, "fdu-birds"));
         const querySnapshot = await getDocs(q);
         let docRef;
         querySnapshot.forEach((doc) => {
@@ -148,6 +148,7 @@ const DownloadScreen = () => {
         });
 
         if (docRef){
+            console.log("Metaview at update: ", metaView);
             console.log("Updating Document...");
             await updateDoc(doc(db, "fdu-birds", docRef), {
                 filepath: metaView.filepath, 
@@ -169,7 +170,7 @@ const DownloadScreen = () => {
 
     const deleteImage = async () => {
         const uid = String(userinfo.userID);
-        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        const q = query(collection(db, "fdu-birds"));
         const querySnapshot = await getDocs(q);
         let docRef;
         querySnapshot.forEach((doc) => {
@@ -235,7 +236,7 @@ const DownloadScreen = () => {
                 <View>
                     {downloadCount == userinfo.uploadCount && Object.keys(metaView).map(key => 
                         <View>
-                        <Text>{downloaded}{key}:</Text>
+                        <Text>{key}:</Text>
                         {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
                         onSubmitEditing={(value) => {textChangeMeta(value.nativeEvent.text, key)}}></TextInput>
                         : Object.keys(metaView[key]).map(subObj => 
