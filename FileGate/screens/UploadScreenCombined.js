@@ -105,7 +105,7 @@ const UploadScreenCombined = () => {
       let longitude;
 
       if (assets.exif){
-          date = "NotFound";
+          date = assets.exif.DateTimeOriginal;
           latitude = assets.exif.GPSLatitude;
           const latitudeSign = assets.exif.GPSLatitudeRef;
           if (latitudeSign == 'S')
