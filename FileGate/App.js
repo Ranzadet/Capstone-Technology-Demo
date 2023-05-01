@@ -38,9 +38,9 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         {/* <Stack.Screen name="FileUpload" component={FileUpload} />
         <Stack.Screen name="FileUpload2" component={FileUpload2} /> */}
-        <Stack.Screen name="UploadScreen" component={UploadScreen} />
-        <Stack.Screen name="UploadScreenManual" component={UploadScreenManual} />
-        <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
+        <Stack.Screen name="Upload with Automatic Data Extraction" component={UploadScreen} />
+        <Stack.Screen name="Upload with Manual Data Input" component={UploadScreenManual} />
+        <Stack.Screen name="Manage Files" component={DownloadScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

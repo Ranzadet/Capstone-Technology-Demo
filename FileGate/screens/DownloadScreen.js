@@ -221,7 +221,7 @@ const DownloadScreen = () => {
     return (
         <SafeAreaView style={styles.container}>
           <View style={styles.header}>
-            <Text style={styles.title}>Download Screen</Text>
+            <Text style={styles.title}>Manage Files</Text>
           </View>
     
           <ScrollView
@@ -289,7 +289,7 @@ const DownloadScreen = () => {
               ))}
     
               <Text style={styles.pullToRefreshText}>
-                Pull to refresh after pressing button
+                PRESS "See Your Images!" FIRST then PULL ALL THE WAY DOWN to VIEW your files
               </Text>
     
               <TouchableOpacity

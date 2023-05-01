@@ -194,7 +194,7 @@ const HomeScreen = () => {
     <View style={styles.buttonsContainer}>
     <TouchableOpacity
           onPress={() => {
-            navigation.navigate('UploadScreenManual');
+            navigation.navigate('Upload with Manual Data Input');
           }}
           style={[styles.button, styles.uploadButton]}
         >
@@ -205,7 +205,7 @@ const HomeScreen = () => {
     </TouchableOpacity>
     <TouchableOpacity
     onPress={() => {
-    navigation.navigate('UploadScreen');
+    navigation.navigate('Upload with Automatic Data Extraction');
     }}
     style={[styles.button, styles.uploadButton]}
     >
@@ -213,11 +213,11 @@ const HomeScreen = () => {
     </TouchableOpacity>
     <TouchableOpacity
     onPress={() => {
-    navigation.navigate('DownloadScreen');
+    navigation.navigate("Manage Files");
     }}
     style={styles.button}
     >
-    <Text style={styles.buttonText}>Download Files</Text>
+    <Text style={styles.buttonText}>Manage Files</Text>
     </TouchableOpacity>
     </View>
     </View>

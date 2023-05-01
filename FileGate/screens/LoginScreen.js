@@ -28,16 +28,17 @@ const LoginScreen = () => {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
-            if (user && user.emailVerified) {
-                navigation.replace("Home");
-            }
-            // else if (user){
-            //     Alert.alert("verify email");
-            // }
-            // else{
-            //     Alert.alert("Not a Valid Account");
-            // }
-        })
+        //     if (user && user.emailVerified) {
+        //         navigation.replace("Home");
+        //     }
+        //     // else if (user){
+        //     //     Alert.alert("verify email");
+        //     // }
+        //     else{
+        //         Alert.alert("Not a Valid Account");
+        //     }
+        // 
+    })
 
         return () => {
             unsubscribe;
@@ -47,19 +48,24 @@ const LoginScreen = () => {
 
     const handleLogin = () => {
         signInWithEmailAndPassword(auth, email, password)
-            .then(userCredentials => {
-                const user = userCredentials.user;
-                setuserID(user.uid);
-                userinfo.userID = user.uid;
-                userinfo.password = password;
-                userinfo.email = email;
-                userinfo.admin = (adminAccounts.includes(email));
-                stealUserInfo();
-                //console.log("User id: ", user.uid);
-                console.log("Logged in with: ", user.email);
-            })
-            .catch(error => Alert.alert("Verify Account"))
-    }
+          .then(userCredentials => {
+            const user = userCredentials.user;
+            setuserID(user.uid);
+            userinfo.userID = user.uid;
+            userinfo.password = password;
+            userinfo.email = email;
+            userinfo.admin = (adminAccounts.includes(email));
+            stealUserInfo();
+            //console.log("User id: ", user.uid);
+            console.log("Logged in with: ", user.email);
+            if (user.emailVerified) {
+              navigation.replace("Home");
+            } else {
+              Alert.alert("Please verify your email address.");
+            }
+          })
+          .catch(error => Alert.alert("Incorrect Password"))
+      }
 
     const stealUserInfo = async () => {
         const name = String(userinfo.userID);
