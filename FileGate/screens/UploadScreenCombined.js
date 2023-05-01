@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, TextInput, Button, Image } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import * as ImagePicker from 'expo-image-picker'
-import { Dialog } from 'react-native-simple-dialogs'
+import { ConfirmDialog, Dialog } from 'react-native-simple-dialogs'
 import { firebase } from '../config'
 import {doc, setDoc, updateDoc, getDoc} from 'firebase/firestore'
 import {db} from '../firebase'
@@ -20,6 +20,12 @@ const UploadScreenCombined = () => {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
+    const [date, setDate] = useState(new Date(new Date().toLocaleDateString()));
+
+    const [imageButtonVisible, setImageButtonVisible] = useState(false);
+    const [latitudeDialogVisible, setLatitudeDialogVisible] = useState(false);
+    const [longitudeDialogVisible, setLongitudeDialogVisible] = useState(false);
+    const [dateDialogVisible, setDateDialogVisible] = useState(false);
 
     // const requestQueue = []; // an array to store pending requests
     // let isFetching = false; // a flag to track whether a request is currently being fetched
@@ -42,11 +48,27 @@ const UploadScreenCombined = () => {
         });
     }
 
+    useEffect(() => {
+      console.log("Latitude: " + metadata.latitude);
+      console.log("Longitude: " + metadata.longitude);
+      console.log("Date: " + metadata.date);
+      if (image) {
+        setImageButtonVisible(true);
+      }
+      else {
+        setImageButtonVisible(false);
+      }
+    }, [image, metadata])
+
     function isDateBetween(dateStr, startStr, endStr) {
       const date = new Date(dateStr);
       const start = new Date(startStr);
       const end = new Date(endStr);
       return date >= start && date <= end;
+    }
+    
+    function doesNotExist(x) {
+      return (x == undefined || x == null || x == "NotFound" || x == "");
     }
 
     const pickImage = async () => {
@@ -60,86 +82,104 @@ const UploadScreenCombined = () => {
         });
         //console.log(result.assets);
 
-        /* METADATA */
-        console.log("Userid: ", userinfo.userID);
-        console.log("Email: ", userinfo.email);
-        console.log("Password: ", userinfo.password);
-        
-        const assets = result.assets[0]
-        console.log(assets)
-        const duration = assets.duration
-        let filExIndex = assets.uri.search(/\..*/);
-        const fileExtension = assets.uri.slice(filExIndex);
-        const uploadtime = new Date().toDateString();
-        const size = assets.fileSize;
+        pickImageCont(result);
+      }
+    
+    function pickImageCont(result) {
 
-        let date;
-        let latitude;
-        let longitude;
+      /* METADATA */
+      console.log("Userid: ", userinfo.userID);
+      console.log("Email: ", userinfo.email);
+      console.log("Password: ", userinfo.password);
+      
+      const assets = result.assets[0]
+      console.log(assets)
+      const duration = assets.duration
+      let filExIndex = assets.uri.search(/\..*/);
+      const fileExtension = assets.uri.slice(filExIndex);
+      const uploadtime = new Date().toDateString();
+      const size = assets.fileSize;
 
-        if (assets.exif){
-            date = assets.exif.DateTimeOriginal;
-            latitude = assets.exif.GPSLatitude;
-            const latitudeSign = assets.exif.GPSLatitudeRef;
-            if (latitudeSign == 'S')
-                latitude = -latitude;
-            longitude = assets.exif.GPSLongitude;
-            const longitudeSign = assets.exif.GPSLongitudeRef;
-            if (longitudeSign == 'W')
-                longitude = -longitude;
-        }
-        else{
+      let date;
+      let latitude;
+      let longitude;
+
+      if (assets.exif){
           date = "NotFound";
-          latitude = "NotFound";
-          longitude = "NotFound";
+          latitude = assets.exif.GPSLatitude;
+          const latitudeSign = assets.exif.GPSLatitudeRef;
+          if (latitudeSign == 'S')
+              latitude = -latitude;
+          longitude = assets.exif.GPSLongitude;
+          const longitudeSign = assets.exif.GPSLongitudeRef;
+          if (longitudeSign == 'W')
+              longitude = -longitude;
+      }
+      else{
+        date = "NotFound";
+        latitude = "NotFound";
+        longitude = "NotFound";
+      }
+
+      // REACT NATIVE DIALOG ASKING FOR DATE
+      // REACT NATIVE DIALOG ASKING FOR LATITUDE
+      // REACT NATIVE DIALOG ASKING FOR LONGITUDE
+      console.log("latitude: " + latitude);
+      console.log("longitude: " + longitude);
+      console.log("date: " + date);
+      
+      console.log(assets)
+      console.log("RELEVANT METADATA: ")
+      // console.log(duration)
+      // console.log(fileExtension)
+      // console.log(date)
+      // console.log(uploadtime)
+      // console.log(size)
+      // console.log(latitude)
+      // console.log(longitude)
+
+      // filepath = assets.uri;
+      // metadata.duration = duration;
+      // metadata.fileExtension = fileExtension;
+      // metadata.date = date;
+      // uploadTime = uploadtime;
+      // metadata.size = size;
+      // metadata.latitude = latitude;
+      // metadata.longitude = longitude;
+      setMetadata({duration: duration, fileExtension:fileExtension, date:date, latitude:latitude, longitude:longitude, size:size});
+      setUploadTime(uploadtime);
+      setUploader(userinfo.userID);
+      setUserPass(userinfo.password);
+      console.log("New uploader: ", uploader)
+      setFilepath(assets.uri.substring(assets.uri.lastIndexOf('/') + 1));
+
+
+      function delay(time) {
+          return new Promise(resolve => setTimeout(resolve, time));
         }
-
-        // REACT NATIVE DIALOG ASKING FOR DATE
-        // REACT NATIVE DIALOG ASKING FOR LATITUDE
-        // REACT NATIVE DIALOG ASKING FOR LONGITUDE
         
-        console.log(assets)
-        console.log("RELEVANT METADATA: ")
-        // console.log(duration)
-        // console.log(fileExtension)
-        // console.log(date)
-        // console.log(uploadtime)
-        // console.log(size)
-        // console.log(latitude)
-        // console.log(longitude)
+      delay(1000).then(() => console.log(''));
 
-        // filepath = assets.uri;
-        // metadata.duration = duration;
-        // metadata.fileExtension = fileExtension;
-        // metadata.date = date;
-        // uploadTime = uploadtime;
-        // metadata.size = size;
-        // metadata.latitude = latitude;
-        // metadata.longitude = longitude;
-        setMetadata({duration: duration, fileExtension:fileExtension, date:date, latitude:latitude, longitude:longitude, size:size});
-        setUploadTime(uploadtime);
-        setUploader(userinfo.userID);
-        setUserPass(userinfo.password);
-        console.log("New uploader: ", uploader)
-        setFilepath(assets.uri.substring(assets.uri.lastIndexOf('/') + 1));
+      console.log(metadata);
+      console.log("Filepath: ", filepath);
+      console.log("Upload Time: ", uploadTime);
+      console.log("Uploader: ", uploader);
 
+      const source = {uri: assets.uri}
+      console.log(source);
+      setImage(source);
 
-        function delay(time) {
-            return new Promise(resolve => setTimeout(resolve, time));
-          }
-          
-        delay(1000).then(() => console.log(''));
+      if (doesNotExist(latitude)) {
+        setLatitudeDialogVisible(true);
+      }
+      else if (doesNotExist(longitude)) {
+        setLongitudeDialogVisible(true);
+      }
+      else if (doesNotExist(date)) {
+        setDateDialogVisible(true);
+      }
 
-        console.log(metadata);
-        console.log("Filepath: ", filepath);
-        console.log("Upload Time: ", uploadTime);
-        console.log("Uploader: ", uploader);
-
-
-        const source = {uri: assets.uri}
-        console.log(source);
-        setImage(source);
-    };
+    }
 
     const uploadImage = async () => {
         setUploading(true);
@@ -242,16 +282,17 @@ const UploadScreenCombined = () => {
     
 
     // get date in format yyyy-mm-dd
-    // const today = new Date(metadata.date);
-    // const year = today.getFullYear();
-    // const month = String(today.getMonth() + 1).padStart(2, '0');
-    // const day = String(today.getDate()).padStart(2, '0');
-    // const formattedDate = `${year}-${month}-${day}`;
-
-    const timestampString = metadata.date;
-    const date = new Date(timestampString.replace(/:/g, "-").substring(0, 10));
-    const formattedDate = date.toISOString().substring(0, 10);
+    const today = date;
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const formattedDate = `${year}-${month}-${day}`;
     console.log("date: " + formattedDate);
+
+    // const timestampString = metadata.date;
+    // const date = new Date(timestampString.replace(/:/g, "-").substring(0, 10));
+    // const formattedDate = date.toISOString().substring(0, 10);
+    // console.log("date: " + formattedDate);
 
     // let station1id = "";
     // let station2id = "";
@@ -390,15 +431,50 @@ const UploadScreenCombined = () => {
   const latitudeChanged = (text) => {
     if (isNumeric(text)) {
         setLatitude(Number(text));
-        console.log(latitude);
+        setMetadata({...metadata, latitude: Number(text)})
+        // const meta = Object.assign(metadata);
+        // meta.latitude = Number(text);
+        // setMetadata(meta);
+        // console.log(latitude);
     }
   }
 
   const longitudeChanged = (text) => {
     if (isNumeric(text)) {
         setLongitude(Number(text));
-        console.log(longitude);
+        setMetadata({...metadata, longitude: Number(text)})
+        // const meta = metadata;
+        // meta.longitude = Number(text);
+        // setMetadata(meta);
+        // console.log(longitude);
     }
+  }
+
+  const dateChanged = (event, dateChoice) => {
+    console.log(dateChoice);
+    setDate(dateChoice);
+    setMetadata({...metadata, date: dateChoice});
+  }
+
+  const fixLatitude = () => {
+    setLatitudeDialogVisible(false);
+    if (doesNotExist(metadata.longitude)) {
+      setLongitudeDialogVisible(true);
+    }
+    else if (doesNotExist(metadata.date)) {
+      setDateDialogVisible(true);
+    }
+  }
+
+  const fixLongitude = () => {
+    setLongitudeDialogVisible(false);
+    if (doesNotExist(metadata.date)) {
+      setDateDialogVisible(true);
+    }
+  }
+
+  const fixDate = () => {
+    setDateDialogVisible(false);
   }
 
   function isNumeric(str) {
@@ -430,9 +506,11 @@ const UploadScreenCombined = () => {
       </View>
 
       {/* Upload Button */}
-      <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!image}>
-        <Text style={styles.uploadButtonText}>Upload</Text>
-      </TouchableOpacity>
+      {imageButtonVisible ? (
+        <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!image}>
+          <Text style={styles.uploadButtonText}>Upload</Text>
+        </TouchableOpacity>
+      ) : null}
 
       {/* Uploading Indicator */}
       {uploading && (
@@ -441,7 +519,7 @@ const UploadScreenCombined = () => {
         </View>
       )}
 
-      <TouchableOpacity style={styles.uploadButton} onPress={makeDialogVisible}>
+      {/* <TouchableOpacity style={styles.uploadButton} onPress={makeDialogVisible}>
         <Text style={styles.uploadButtonText}>Dialog</Text>
       </TouchableOpacity>
       
@@ -463,7 +541,60 @@ const UploadScreenCombined = () => {
               style={styles.imagePickerButtonText}
             />
           </View>
-      </Dialog>
+      </Dialog> */}
+      
+      <ConfirmDialog
+        visible={latitudeDialogVisible}
+        title="There was no latitude detected in this image's metadata. Please tap below and enter a latitude."
+        // message="There was no latitude detected in this image's metadata. Please input a latitude."
+        positiveButton={{
+          title: "Submit",
+          onPress: () => fixLatitude()
+        }}>
+          <View>
+            <TextInput
+              placeholder="Latitude"
+              value={latitude}
+              onChangeText={latitudeChanged}
+              style={styles.imagePickerButtonText}
+            />
+          </View>
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        visible={longitudeDialogVisible}
+        title="There was no longitude detected in this image's metadata. Please tap below and enter a longitude."
+        // message="There was no longitude detected in this image's metadata. Please input a longitude."
+        positiveButton={{
+          title: "Submit",
+          onPress: () => fixLongitude()
+        }}>
+          <View>
+            <TextInput
+              placeholder="Longitude"
+              value={longitude}
+              onChangeText={longitudeChanged}
+              style={styles.imagePickerButtonText}
+            />
+          </View>
+      </ConfirmDialog>
+
+      <ConfirmDialog
+        visible={dateDialogVisible}
+        title="There was no date detected in this image's metadata. Please tap below and enter a date."
+        // message="There was no date detected in this image's metadata. Please input a date."
+        positiveButton={{
+          title: "Submit",
+          onPress: () => fixDate()
+        }}>
+          <View>
+            <RNDateTimePicker 
+              value={date}
+              mode="date"
+              onChange={dateChanged}
+            />
+          </View>
+      </ConfirmDialog>
     </SafeAreaView>
   );
 };
