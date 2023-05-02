@@ -23,6 +23,8 @@ const DownloadScreen = () => {
     const [helpInput, setHelpInput] = useState({});
     const [uploadData, setUploadData] = useState({});
     let renderCount = 0;
+    const [downloadCount, setDownloadCount] = useState(false);
+    const [clickedImage, setClickedImage] = useState(false);
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -44,8 +46,14 @@ const DownloadScreen = () => {
         const storage = getStorage();
         const count = docSnap0.data().uploadCount;
         
+        let q;
+        if (!userinfo.admin)
+            q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        else{
+            q = query(collection(db, "fdu-birds"));
+        }
+        // const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
 
-        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
         const querySnapshot = await getDocs(q);
         console.log(querySnapshot.size);
         let i = 1;
@@ -74,6 +82,7 @@ const DownloadScreen = () => {
                     newImages2.push(url);
                     newImageCheck.push(doc.data().filepath);
                     console.log(url);
+                    setDownloadCount(e => e+1);
                     // Insert url into an <img> tag to "download"
                 })
                 .catch((error) => {console.log(error)})
@@ -120,6 +129,7 @@ const DownloadScreen = () => {
 
         console.log("Metaview: ", metaView);
         //return <Text></Text>;
+        setClickedImage(true);
     }
 
     const renderMeta = (data) => {
@@ -128,7 +138,7 @@ const DownloadScreen = () => {
 
     const uploadImage = async () =>{
         const uid = String(userinfo.userID);
-        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        const q = query(collection(db, "fdu-birds"));
         const querySnapshot = await getDocs(q);
         let docRef;
         querySnapshot.forEach((doc) => {
@@ -140,6 +150,7 @@ const DownloadScreen = () => {
         });
 
         if (docRef){
+            console.log("Metaview at update: ", metaView);
             console.log("Updating Document...");
             await updateDoc(doc(db, "fdu-birds", docRef), {
                 filepath: metaView.filepath, 
@@ -161,7 +172,7 @@ const DownloadScreen = () => {
 
     const deleteImage = async () => {
         const uid = String(userinfo.userID);
-        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        const q = query(collection(db, "fdu-birds"));
         const querySnapshot = await getDocs(q);
         let docRef;
         querySnapshot.forEach((doc) => {
@@ -225,7 +236,7 @@ const DownloadScreen = () => {
         }>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
                 <View>
-                    {Object.keys(metaView).map(key => 
+                    {downloadCount == userinfo.uploadCount && Object.keys(metaView).map(key => 
                         <View>
                         <Text>{key}:</Text>
                         {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
@@ -241,7 +252,7 @@ const DownloadScreen = () => {
                         </View>
                     )}
 
-                    {(metaView && userinfo.admin) ? <TouchableOpacity style={styles.buttonStyle3} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
+                    {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.buttonStyle3} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
 
                 {/* {Object.keys(metaView).map(key => (
                     <View style={styles.container} key={key}>
@@ -249,7 +260,7 @@ const DownloadScreen = () => {
                     </View>
                 ))} */}
                     
-                    <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>
+                    {clickedImage && <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
                 </View> 
                 
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>

@@ -6,6 +6,9 @@ import {doc, setDoc, updateDoc, getDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
+import Exif from 'react-native-exif';
+import MediaMeta from 'react-native-media-meta';
+import Geolocation from 'react-native-get-location';
 
 const UploadScreen = () => {
     const [image, setImage] = useState(null);
@@ -59,9 +62,20 @@ const UploadScreen = () => {
         console.log("Userid: ", userinfo.userID);
         console.log("Email: ", userinfo.email);
         console.log("Password: ", userinfo.password);
+
+
+
+        console.log("Full Assets: ", result.assets);
         
         const assets = result.assets[0]
-        console.log(assets)
+
+        if (assets.type === 'video') {
+          // const exifData = await Exif.getExif(assets.uri);
+          // console.log('Exif data:', exifData);
+          // const metadata = await MediaMeta.get(assets.uri);
+          // console.log('Metadata:', metadata);
+        }
+
         const duration = assets.duration
         let filExIndex = assets.uri.search(/\..*/);
         const fileExtension = assets.uri.slice(filExIndex);
@@ -90,7 +104,7 @@ const UploadScreen = () => {
         }
         
         
-        console.log(assets)
+        console.log("Assets: ", assets)
         console.log("RELEVANT METADATA: ")
         // console.log(duration)
         // console.log(fileExtension)
@@ -220,6 +234,7 @@ const UploadScreen = () => {
       });
   }
 
+  //pass metadata as a parameter into submitForWeahter and move it outside of this funciton so that it can be exported to DownloadScreen 
   const submitForWeather = async () => {
     // const latMin = latitude;
     // const latMax = latitude;
@@ -488,3 +503,4 @@ const styles = StyleSheet.create({
   });
   
   export default UploadScreen;
+  // export {submitForWeather}
