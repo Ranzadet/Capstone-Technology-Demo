@@ -231,6 +231,7 @@ const UploadScreen = () => {
       });
   }
 
+  //pass metadata as a parameter into submitForWeahter and move it outside of this funciton so that it can be exported to DownloadScreen 
   const submitForWeather = async () => {
     // const latMin = latitude;
     // const latMax = latitude;
@@ -500,3 +501,4 @@ const styles = StyleSheet.create({
   });
   
   export default UploadScreen;
+  // export {submitForWeather}
