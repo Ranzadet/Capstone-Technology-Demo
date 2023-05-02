@@ -24,6 +24,7 @@ const DownloadScreen = () => {
     const [uploadData, setUploadData] = useState({});
     let renderCount = 0;
     const [downloadCount, setDownloadCount] = useState(false);
+    const [clickedImage, setClickedImage] = useState(false);
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -128,6 +129,7 @@ const DownloadScreen = () => {
 
         console.log("Metaview: ", metaView);
         //return <Text></Text>;
+        setClickedImage(true);
     }
 
     const renderMeta = (data) => {
@@ -250,7 +252,7 @@ const DownloadScreen = () => {
                         </View>
                     )}
 
-                    {(metaView && userinfo.admin) ? <TouchableOpacity style={styles.buttonStyle3} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
+                    {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.buttonStyle3} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
 
                 {/* {Object.keys(metaView).map(key => (
                     <View style={styles.container} key={key}>
@@ -258,7 +260,7 @@ const DownloadScreen = () => {
                     </View>
                 ))} */}
                     
-                    <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>
+                    {clickedImage && <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
                 </View> 
                 
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
