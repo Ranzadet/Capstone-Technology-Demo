@@ -6,6 +6,7 @@ import { userinfo } from './LoginScreen'
 
 const HomeScreen = () => {
   const [adminVar, setAdminVar] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
   const navigation = useNavigation();
   
   const handleSignOut = () => {
@@ -18,6 +19,7 @@ const HomeScreen = () => {
   };
 
   useEffect(() => {
+    setUserEmail(auth.currentUser?.email);
     const interval = setInterval(() => {
       // Check the value of myImportedVar
       if (userinfo.admin === true) {
@@ -38,27 +40,27 @@ const HomeScreen = () => {
     <View style={styles.header}>
     <Text style={styles.logo}> FileGate </Text>
     </View>
-    <Text style={styles.email}>Welcome, {auth.currentUser?.email}!</Text>
+    <Text style={styles.email}>Welcome, {userEmail}!</Text>
     <View style={styles.buttonsContainer}>
-    <TouchableOpacity
+    {/* <TouchableOpacity
           onPress={() => {
             navigation.navigate('UploadScreenManual');
           }}
           style={[styles.button, styles.uploadButton]}
         >
           <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Manual</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
     <TouchableOpacity onPress={handleSignOut} style={[styles.button, styles.signOutButton]}>
     <Text style={[styles.buttonText, styles.signOutButtonText]}>Sign Out</Text>
     </TouchableOpacity>
-    <TouchableOpacity
+    {/* <TouchableOpacity
       onPress={() => {
         navigation.navigate('UploadScreen');
       }}
       style={[styles.button, styles.uploadButton]}
     >
       <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
-    </TouchableOpacity>
+    </TouchableOpacity> */}
     <TouchableOpacity
       onPress={() => {
         navigation.navigate('DownloadScreen');
@@ -67,21 +69,21 @@ const HomeScreen = () => {
     >
       <Text style={styles.buttonText}>Download Files</Text>
     </TouchableOpacity>
-    <TouchableOpacity
+    {/* <TouchableOpacity
       onPress={() => {
         navigation.navigate('UploadScreenManual');
       }}
       style={[styles.button, styles.uploadButton]}
     >
       <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Manual</Text>
-    </TouchableOpacity>
+    </TouchableOpacity> */}
     <TouchableOpacity
       onPress={() => {
         navigation.navigate('UploadScreenCombined');
       }}
       style={[styles.button, styles.uploadButton]}
     >
-      <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Combined</Text>
+      <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
     </TouchableOpacity>
     <View>
     {adminVar ? 
