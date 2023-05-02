@@ -1,6 +1,8 @@
 {
   "dependencies": {
+    "axios": "^1.3.4",
     "http-server": "^14.1.1",
-    "react-native-date-picker": "^4.2.6"
+    "react-native-date-picker": "^4.2.6",
+    "react-native-simple-dialogs": "^2.0.1"
   }
 }
