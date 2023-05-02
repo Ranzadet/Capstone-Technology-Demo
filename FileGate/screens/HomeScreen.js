@@ -40,6 +40,14 @@ const HomeScreen = () => {
     </View>
     <Text style={styles.email}>Welcome, {auth.currentUser?.email}!</Text>
     <View style={styles.buttonsContainer}>
+    <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('UploadScreenManual');
+          }}
+          style={[styles.button, styles.uploadButton]}
+        >
+          <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Manual</Text>
+        </TouchableOpacity>
     <TouchableOpacity onPress={handleSignOut} style={[styles.button, styles.signOutButton]}>
     <Text style={[styles.buttonText, styles.signOutButtonText]}>Sign Out</Text>
     </TouchableOpacity>
