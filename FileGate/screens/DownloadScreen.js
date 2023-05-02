@@ -8,6 +8,7 @@ import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
 import {getStorage, ref, getDownloadURL, deleteObject} from 'firebase/storage'
 import { ScrollView } from 'react-native';
+import { submitForWeather } from './UploadScreenCombined'
 
 
 ``
@@ -25,6 +26,7 @@ const DownloadScreen = () => {
     let renderCount = 0;
     const [downloadCount, setDownloadCount] = useState(false);
     const [clickedImage, setClickedImage] = useState(false);
+    const [weatherDataChanged, setWeatherDataChanged] = useState(false);
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -151,12 +153,30 @@ const DownloadScreen = () => {
 
         if (docRef){
             console.log("Metaview at update: ", metaView);
+            
+            let weatherList;
+            if (weatherDataChanged){
+                console.log("Detected Change in Metadata");
+                console.log("Rerunning Weather Algorithm...");
+                try{
+                    weatherList = await submitForWeather(metaView.metadata);
+                    console.log("Weather Algorithm Success!");
+                }
+                catch (e){
+                    console.log("Weather Algorithm Failure.")
+                    console.log(e);
+                }
+            }
+            else{
+                weatherList = metaView.weather;
+            }
+
             console.log("Updating Document...");
             await updateDoc(doc(db, "fdu-birds", docRef), {
                 filepath: metaView.filepath, 
                 uploadTime: metaView.uploadTime,
                 uploader: metaView.uploader,
-                weather: metaView.weather,
+                weather: weatherList,
                 metadata: metaView.metadata
             });
             console.log("Document Update Successful!");
@@ -212,6 +232,7 @@ const DownloadScreen = () => {
     }
     
     const textChangeSub = (text, key, subObj)=> {
+        setWeatherDataChanged(true);
         console.log("Text is changing!: ", text);
         for (let i = 0;i<Object.keys(metaView[key]).length;i++){
             let bigObj = metaView[Object.keys(metaView)[i]];
@@ -291,6 +312,9 @@ const DownloadScreen = () => {
                     
                 </View>
             </ScrollView>
+
+            {/* <Text>{downloadCount}</Text>
+            <Text>{userinfo.uploadCount}</Text> */}
             
         </SafeAreaView>
     )
