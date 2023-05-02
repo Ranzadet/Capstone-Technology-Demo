@@ -232,7 +232,6 @@ const DownloadScreen = () => {
     }
     
     const textChangeSub = (text, key, subObj)=> {
-        setWeatherDataChanged(true);
         console.log("Text is changing!: ", text);
         for (let i = 0;i<Object.keys(metaView[key]).length;i++){
             let bigObj = metaView[Object.keys(metaView)[i]];
@@ -242,6 +241,10 @@ const DownloadScreen = () => {
                     console.log(bigObj[subObj]);
                     console.log("New: ", text);
                     setMetaView(metaView);
+                    if (Object.keys(metaView)[i] === "latitude" || Object.keys(metaView)[i] === "longitude" || Object.keys(metaView)[i] === "date"){
+                        setWeatherDataChanged(true);
+                        console.log("weather data changed! : ", Object.keys(metaView)[i]);
+                    }
                     // helpInput[Object.keys(helpInput)[i]] = text;
                     // setHelpInput(helpInput);
                 }
