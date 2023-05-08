@@ -44,7 +44,7 @@ const HomeScreen = () => {
     <View style={styles.buttonsContainer}>
     {/* <TouchableOpacity
           onPress={() => {
-            navigation.navigate('UploadScreenManual');
+            navigation.navigate('Upload with Manual Data Input');
           }}
           style={[styles.button, styles.uploadButton]}
         >
@@ -61,12 +61,6 @@ const HomeScreen = () => {
     >
       <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
     </TouchableOpacity> */}
-    <TouchableOpacity
-      onPress={() => {
-        navigation.navigate('DownloadScreen');
-      }}
-      style={styles.button}
-    >
       <Text style={styles.buttonText}>Download Files</Text>
     </TouchableOpacity>
     {/* <TouchableOpacity
@@ -78,12 +72,21 @@ const HomeScreen = () => {
       <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files Manual</Text>
     </TouchableOpacity> */}
     <TouchableOpacity
+
+    onPress={() => {
+    navigation.navigate("Manage Files");
+    }}
+    style={styles.button}
+    >
+    <Text style={styles.buttonText}>Manage Files</Text>
+
       onPress={() => {
         navigation.navigate('UploadScreenCombined');
       }}
       style={[styles.button, styles.uploadButton]}
     >
       <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
+
     </TouchableOpacity>
     <View>
     {adminVar ? 

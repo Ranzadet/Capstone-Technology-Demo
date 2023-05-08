@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
     borderWidth: 2,
-    borderColor: '#008080',
+    borderColor: '#6646ee',
     alignItems: 'center',
     justifyContent: 'center',
     },
@@ -551,12 +551,12 @@ const styles = StyleSheet.create({
     },
     imagePickerButtonText: {
     fontSize: 20,
-    color: '#008080',
+    color: '#6646ee',
     },
     uploadButton: {
     width: '80%',
     height: 50,
-    backgroundColor: '#008080',
+    backgroundColor: '#6646ee',
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 20,

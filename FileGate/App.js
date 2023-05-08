@@ -36,11 +36,9 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen}/>
         <Stack.Screen name="ResetPassword" component={ResetPassword}/>
         <Stack.Screen name="Signup" component={SignupScreen}/>
+        <Stack.Screen name="Manage Files" component={DownloadScreen} />
         <Stack.Screen name="Home" component={HomeScreen}/>
-        <Stack.Screen name="UploadScreen" component={UploadScreen} />
-        <Stack.Screen name="UploadScreenManual" component={UploadScreenManual} />
         <Stack.Screen name="UploadScreenCombined" component={UploadScreenCombined} />
-        <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
         <Stack.Screen name="SyncScreen" component={SyncScreen} />
       </Stack.Navigator>
     </NavigationContainer>
