@@ -237,6 +237,11 @@ const DownloadScreen = () => {
             <View style={styles.header}>
                 <Text style={styles.title}>Manage Files</Text>
             </View>
+            <TouchableOpacity
+                style={styles.downloadButton}
+                onPress={downloadImage}>
+                <Text style={styles.buttonText}>See Your Images!</Text>
+              </TouchableOpacity>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
                 <View>
                     {downloadCount == userinfo.uploadCount && Object.keys(metaView).map(key => 
@@ -284,13 +289,6 @@ const DownloadScreen = () => {
                         onChangeText={text => setEmail(text)}
                         style={styles.input}
                     /> */}
-                    <Text>Pull to refresh after pressing button</Text>
-                    <TouchableOpacity style={styles.buttonStyle} onPress={() => {downloadImage();}}>
-                        <Text style={styles.textStyle}>
-                            See Your Images!
-                        </Text>
-                    </TouchableOpacity>
-
                     
                 </View>
             </ScrollView>
