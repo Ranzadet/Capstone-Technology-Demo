@@ -14,6 +14,7 @@ class userinfo {
         email = "";
         password = "";
         admin = false;
+        uploadCount = 0;
     }
 }
 
@@ -74,6 +75,7 @@ const LoginScreen = () => {
         
         if (docSnap.exists()) {
           console.log("Document data:", docSnap.data());
+          userinfo.uploadCount = docSnap.data().uploadCount;
         } else {
           // doc.data() will be undefined in this case
           console.log("Creating Document!");

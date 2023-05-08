@@ -23,6 +23,8 @@ const DownloadScreen = () => {
     const [helpInput, setHelpInput] = useState({});
     const [uploadData, setUploadData] = useState({});
     let renderCount = 0;
+    const [downloadCount, setDownloadCount] = useState(false);
+    const [clickedImage, setClickedImage] = useState(false);
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -44,8 +46,14 @@ const DownloadScreen = () => {
         const storage = getStorage();
         const count = docSnap0.data().uploadCount;
         
+        let q;
+        if (!userinfo.admin)
+            q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        else{
+            q = query(collection(db, "fdu-birds"));
+        }
+        // const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
 
-        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
         const querySnapshot = await getDocs(q);
         console.log(querySnapshot.size);
         let i = 1;
@@ -74,6 +82,7 @@ const DownloadScreen = () => {
                     newImages2.push(url);
                     newImageCheck.push(doc.data().filepath);
                     console.log(url);
+                    setDownloadCount(e => e+1);
                     // Insert url into an <img> tag to "download"
                 })
                 .catch((error) => {console.log(error)})
@@ -120,6 +129,7 @@ const DownloadScreen = () => {
 
         console.log("Metaview: ", metaView);
         //return <Text></Text>;
+        setClickedImage(true);
     }
 
     const renderMeta = (data) => {
@@ -128,7 +138,7 @@ const DownloadScreen = () => {
 
     const uploadImage = async () =>{
         const uid = String(userinfo.userID);
-        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        const q = query(collection(db, "fdu-birds"));
         const querySnapshot = await getDocs(q);
         let docRef;
         querySnapshot.forEach((doc) => {
@@ -140,6 +150,7 @@ const DownloadScreen = () => {
         });
 
         if (docRef){
+            console.log("Metaview at update: ", metaView);
             console.log("Updating Document...");
             await updateDoc(doc(db, "fdu-birds", docRef), {
                 filepath: metaView.filepath, 
@@ -161,7 +172,7 @@ const DownloadScreen = () => {
 
     const deleteImage = async () => {
         const uid = String(userinfo.userID);
-        const q = query(collection(db, "fdu-birds"), where("uploader", "==", uid));
+        const q = query(collection(db, "fdu-birds"));
         const querySnapshot = await getDocs(q);
         let docRef;
         querySnapshot.forEach((doc) => {
@@ -223,19 +234,54 @@ const DownloadScreen = () => {
           <View style={styles.header}>
             <Text style={styles.title}>Manage Files</Text>
           </View>
-    
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }>
-            <View style={styles.metaViewContainer}>
-              {Object.keys(metaView).map((key) => {
-                if (typeof metaView[key] === 'object') {
-                  return Object.keys(metaView[key]).map((subObj) => (
-                    <View key={subObj}>
-                      <Text style={styles.labelText}>{subObj}</Text>
-                      <TextInput
-                        key={subObj}
+            <ScrollView refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+            {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
+                <View>
+                    {downloadCount == userinfo.uploadCount && Object.keys(metaView).map(key => 
+                        <View>
+                        <Text>{key}:</Text>
+                        {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
+                        onSubmitEditing={(value) => {textChangeMeta(value.nativeEvent.text, key)}}></TextInput>
+                        : Object.keys(metaView[key]).map(subObj => 
+                            <View>
+                                <Text>{subObj}</Text>
+                            <TextInput key={subObj} style={styles.input} defaultValue={String(metaView[key][subObj])} 
+                            onSubmitEditing={(value) => {textChangeSub(value.nativeEvent.text, key, subObj)}}></TextInput>
+                            </View>
+                        )}
+                        {/*Current issue is that key is set as the first metaView value, but never changes to match new typed input values unless the component is re-rendered */}
+                        </View>
+                    )}
+
+                    {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.buttonStyle3} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
+
+                {/* {Object.keys(metaView).map(key => (
+                    <View style={styles.container} key={key}>
+                        <Text>{key}: {String(metaView[key])}</Text>
+                    </View>
+                ))} */}
+                    
+                    {clickedImage && <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
+                </View> 
+                
+                {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
+                    <Text style={styles.textStyle}>
+                        Pick an image
+                    </Text>
+                </TouchableOpacity> */}
+                <View style={styles.container}>
+                    {/* {image && <Image source={{uri: image.uri}} style={{width: 300, height: 300}}></Image>} */}
+                    {console.log("Images count: ", images2)}
+                    {console.log("Metaview (after):", metaView)}
+                    {images2.map(image => 
+                       <View key={image}><Pressable onPress={() => {updateMeta(images2.indexOf(image));}}><Image source={{ uri: image}} style={{width: 300, height: 300}} key={image} /></Pressable></View>)
+                    }
+                    {/* <TextInput
+                        placeholder="Image Name"
+                        value={email}
+                        onChangeText={text => setEmail(text)}
                         style={styles.input}
                         defaultValue={String(metaView[key][subObj])}
                         onSubmitEditing={(value) =>
