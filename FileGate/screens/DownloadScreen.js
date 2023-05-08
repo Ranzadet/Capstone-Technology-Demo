@@ -304,57 +304,79 @@ export default DownloadScreen;
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: '#fff',
-      padding: 16,
     },
-    titleText: {
-      fontSize: 22,
-      fontWeight: 'bold',
-      textAlign: 'center',
-      paddingVertical: 20,
-    },
-    textStyle: {
-      backgroundColor: '#fff',
-      fontSize: 15,
-      marginTop: 16,
-      color: 'black',
-    },
-    buttonStyle: {
-      alignItems: 'center',
-      position:'relative',
-      flexDirection: 'row',
-      backgroundColor: '#DDDDDD',
-      padding: 5,
-    },
-    buttonStyle2: {
+    header: {
+        width: '100%',
+        height: 80,
+        backgroundColor: '#6646ee',
         alignItems: 'center',
-        flexDirection: 'row',
-        backgroundColor: '#8D08EF',
-        padding: 10,
-        width: 200,
-        position: "relative",
-        left:'15%'
-      },
-      buttonStyle3: {
-        alignItems: 'center',
-        flexDirection: 'row',
-        backgroundColor: '#C41E3A',
-        padding: 10,
-        width: 200,
-        position: "relative",
-        left:'15%'
-      },
-    imageIconStyle: {
-      height: 20,
-      width: 20,
-      resizeMode: 'stretch',
+        justifyContent: 'center',
+    },
+    title: {
+      color: 'white',
+      fontSize: 24,
+
+    },
+    metaViewContainer: {
+      padding: 20,
+    },
+    labelText: {
+
+      marginBottom: 5,
     },
     input: {
-      backgroundColor: 'blue',
-      paddingHorizontal: 15,
-      paddingVertical: 10,
-      borderRadius: 10,
-      marginTop: 5,
-      color:'white'
-  }
-});  
+      borderWidth: 1,
+      borderColor: 'gray',
+      borderRadius: 5,
+      padding: 10,
+      marginBottom: 10,
+    },
+    deleteButton: {
+      backgroundColor: 'red',
+      padding: 10,
+      borderRadius: 5,
+      marginBottom: 10,
+    },
+    updateButton: {
+      backgroundColor: '#6646ee',
+      padding: 10,
+      borderRadius: 5,
+      marginBottom: 10,
+    },
+    buttonText: {
+      color: 'white',
+      textAlign: 'center',
+    },
+    imageContainer: {
+      flex: 1,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    imageBox: {
+      width: 100,
+      height: 100,
+      margin: 5,
+      borderWidth: 1,
+      borderColor: 'gray',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    image: {
+      width: 100,
+      height: 100,
+    },
+    pullToRefreshText: {
+      textAlign: 'center',
+      margin: 10,
+    },
+    downloadButton: {
+      backgroundColor: '#6646ee',
+      padding: 10,
+      borderRadius: 5,
+      marginTop: 10,
+    },
+  });
+  
