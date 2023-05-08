@@ -260,7 +260,7 @@ const DownloadScreen = () => {
                         </View>
                     )}
 
-                    {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.buttonStyle3} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
+                    {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
 
                 {/* {Object.keys(metaView).map(key => (
                     <View style={styles.container} key={key}>
@@ -268,7 +268,7 @@ const DownloadScreen = () => {
                     </View>
                 ))} */}
                     
-                    {clickedImage && <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
+                    {clickedImage && <TouchableOpacity style={styles.updateButton} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
                 </View> 
                 
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
@@ -281,7 +281,7 @@ const DownloadScreen = () => {
                     {console.log("Images count: ", images2)}
                     {console.log("Metaview (after):", metaView)}
                     {images2.map(image => 
-                       <View key={image}><Pressable onPress={() => {updateMeta(images2.indexOf(image));}}><Image source={{ uri: image}} style={{width: 300, height: 300}} key={image} /></Pressable></View>)
+                       <View key={image} style={styles.imageBox}><Pressable onPress={() => {updateMeta(images2.indexOf(image));}}><Image source={{ uri: image}} style={styles.image} key={image} /></Pressable></View>)
                     }
                     {/* <TextInput
                         placeholder="Image Name"
