@@ -231,12 +231,12 @@ const DownloadScreen = () => {
     
     return (
         <SafeAreaView style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Manage Files</Text>
-          </View>
             <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
+            <View style={styles.header}>
+                <Text style={styles.title}>Manage Files</Text>
+            </View>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
                 <View>
                     {downloadCount == userinfo.uploadCount && Object.keys(metaView).map(key => 
@@ -283,153 +283,78 @@ const DownloadScreen = () => {
                         value={email}
                         onChangeText={text => setEmail(text)}
                         style={styles.input}
-                        defaultValue={String(metaView[key][subObj])}
-                        onSubmitEditing={(value) =>
-                          textChangeSub(value.nativeEvent.text, key, subObj)
-                        }
-                      />
-                    </View>
-                  ));
-                }
-                return (
-                  <View key={key}>
-                    <Text style={styles.labelText}>{key}:</Text>
-                    <TextInput
-                      key={key}
-                      style={styles.input}
-                      defaultValue={String(metaView[key])}
-                      onSubmitEditing={(value) =>
-                        textChangeMeta(value.nativeEvent.text, key)
-                      }
-                    />
-                  </View>
-                );
-              })}
-    
-              {metaView && userinfo.admin && (
-                <TouchableOpacity
-                  style={styles.deleteButton}
-                  onPress={deleteImage}>
-                  <Text style={styles.buttonText}>Delete Image</Text>
-                </TouchableOpacity>
-              )}
-    
-              <TouchableOpacity
-                style={styles.updateButton}
-                onPress={uploadImage}>
-                <Text style={styles.buttonText}>Update Metadata</Text>
-              </TouchableOpacity>
-            </View>
-    
-            <View style={styles.imageContainer}>
-              {images2.map((image) => (
-                <View key={image} style={styles.imageBox}>
-                  <Pressable onPress={() => updateMeta(images2.indexOf(image))}>
-                    <Image
-                      source={{ uri: image }}
-                      style={styles.image}
-                      key={image}
-                    />
-                  </Pressable>
+                    /> */}
+                    <Text>Pull to refresh after pressing button</Text>
+                    <TouchableOpacity style={styles.buttonStyle} onPress={() => {downloadImage();}}>
+                        <Text style={styles.textStyle}>
+                            See Your Images!
+                        </Text>
+                    </TouchableOpacity>
+
+                    
                 </View>
-              ))}
-    
-              <Text style={styles.pullToRefreshText}>
-                PRESS "See Your Images!" FIRST then PULL ALL THE WAY DOWN to VIEW your files
-              </Text>
-    
-              <TouchableOpacity
-                style={styles.downloadButton}
-                onPress={downloadImage}>
-                <Text style={styles.buttonText}>See Your Images!</Text>
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
+            </ScrollView>
+            
         </SafeAreaView>
-      );
-    };
-    
-    export default DownloadScreen;
+    )
+}
 
+export default DownloadScreen;
 
-
-    const styles = StyleSheet.create({
-        container: {
-          flex: 1,
-        },
-        header: {
-            width: '100%',
-            height: 80,
-            backgroundColor: '#6646ee',
-            alignItems: 'center',
-            justifyContent: 'center',
-        },
-        title: {
-          color: 'white',
-          fontSize: 24,
-
-        },
-        metaViewContainer: {
-          padding: 20,
-        },
-        labelText: {
-
-          marginBottom: 5,
-        },
-        input: {
-          borderWidth: 1,
-          borderColor: 'gray',
-          borderRadius: 5,
-          padding: 10,
-          marginBottom: 10,
-        },
-        deleteButton: {
-          backgroundColor: 'red',
-          padding: 10,
-          borderRadius: 5,
-          marginBottom: 10,
-        },
-        updateButton: {
-          backgroundColor: '#6646ee',
-          padding: 10,
-          borderRadius: 5,
-          marginBottom: 10,
-        },
-        buttonText: {
-          color: 'white',
-          textAlign: 'center',
-        },
-        imageContainer: {
-          flex: 1,
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          justifyContent: 'center',
-          alignItems: 'center',
-          padding: 20,
-        },
-        imageBox: {
-          width: 100,
-          height: 100,
-          margin: 5,
-          borderWidth: 1,
-          borderColor: 'gray',
-          alignItems: 'center',
-          justifyContent: 'center',
-        },
-        image: {
-          width: 100,
-          height: 100,
-        },
-        pullToRefreshText: {
-          textAlign: 'center',
-          margin: 10,
-        },
-        downloadButton: {
-          backgroundColor: '#6646ee',
-          padding: 10,
-          borderRadius: 5,
-          marginTop: 10,
-        },
-      });
-      
-    
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#fff',
+      padding: 16,
+    },
+    titleText: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      textAlign: 'center',
+      paddingVertical: 20,
+    },
+    textStyle: {
+      backgroundColor: '#fff',
+      fontSize: 15,
+      marginTop: 16,
+      color: 'black',
+    },
+    buttonStyle: {
+      alignItems: 'center',
+      position:'relative',
+      flexDirection: 'row',
+      backgroundColor: '#DDDDDD',
+      padding: 5,
+    },
+    buttonStyle2: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        backgroundColor: '#8D08EF',
+        padding: 10,
+        width: 200,
+        position: "relative",
+        left:'15%'
+      },
+      buttonStyle3: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        backgroundColor: '#C41E3A',
+        padding: 10,
+        width: 200,
+        position: "relative",
+        left:'15%'
+      },
+    imageIconStyle: {
+      height: 20,
+      width: 20,
+      resizeMode: 'stretch',
+    },
+    input: {
+      backgroundColor: 'blue',
+      paddingHorizontal: 15,
+      paddingVertical: 10,
+      borderRadius: 10,
+      marginTop: 5,
+      color:'white'
+  }
+});  
