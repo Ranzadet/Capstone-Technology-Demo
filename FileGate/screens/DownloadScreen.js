@@ -243,7 +243,7 @@ const DownloadScreen = () => {
                 <Text style={styles.buttonText}>See Your Images!</Text>
               </TouchableOpacity>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
-                <View>
+                <View style={styles.metaViewContainer}>
                     {downloadCount == userinfo.uploadCount && Object.keys(metaView).map(key => 
                         <View>
                         <Text>{key}:</Text>
