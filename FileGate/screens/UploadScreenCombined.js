@@ -282,17 +282,17 @@ const UploadScreenCombined = () => {
     
 
     // get date in format yyyy-mm-dd
-    const today = date;
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-    console.log("date: " + formattedDate);
-
-    // const timestampString = metadata.date;
-    // const date = new Date(timestampString.replace(/:/g, "-").substring(0, 10));
-    // const formattedDate = date.toISOString().substring(0, 10);
+    // const today = date;
+    // const year = today.getFullYear();
+    // const month = String(today.getMonth() + 1).padStart(2, '0');
+    // const day = String(today.getDate()).padStart(2, '0');
+    // const formattedDate = `${year}-${month}-${day}`;
     // console.log("date: " + formattedDate);
+
+    const timestampString = metadata.date;
+    const date = new Date(timestampString.replace(/:/g, "-").substring(0, 10));
+    const formattedDate = date.toISOString().substring(0, 10);
+    console.log("date: " + formattedDate);
 
     // let station1id = "";
     // let station2id = "";
