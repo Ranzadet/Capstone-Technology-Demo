@@ -244,7 +244,7 @@ const DownloadScreen = () => {
               </TouchableOpacity>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
                 <View style={styles.metaViewContainer}>
-                    {downloadCount == userinfo.uploadCount && Object.keys(metaView).map(key => 
+                    {(userinfo.admin || (downloadCount == userinfo.uploadCount)) && Object.keys(metaView).map(key => 
                         <View>
                         <Text>{key}:</Text>
                         {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
@@ -260,16 +260,11 @@ const DownloadScreen = () => {
                         </View>
                     )}
 
-                    {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
-
-                {/* {Object.keys(metaView).map(key => (
-                    <View style={styles.container} key={key}>
-                        <Text>{key}: {String(metaView[key])}</Text>
-                    </View>
-                ))} */}
-                    
-                    {clickedImage && <TouchableOpacity style={styles.updateButton} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
                 </View> 
+
+                {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
+                    
+                {clickedImage && <TouchableOpacity style={styles.updateButton} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
                 
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
                     <Text style={styles.textStyle}>
