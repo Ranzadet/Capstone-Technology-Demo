@@ -214,10 +214,20 @@ const HomeScreen = () => {
     <TouchableOpacity
     onPress={() => {
     navigation.navigate('Manage Files');
+    navigation.navigate("Manage Files");
     }}
     style={styles.button}
     >
     <Text style={styles.buttonText}>Manage Files</Text>
+    <Text style={styles.buttonText}>Manage Files</Text>
+
+      onPress={() => {
+        navigation.navigate('UploadScreenCombined');
+      }}
+      style={[styles.button, styles.uploadButton]}
+    >
+      <Text style={[styles.buttonText, styles.uploadButtonText]}>Upload Files</Text>
+
     </TouchableOpacity>
     </View>
     </View>

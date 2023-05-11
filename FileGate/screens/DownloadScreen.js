@@ -288,9 +288,6 @@ const DownloadScreen = () => {
                 </View>
               ))}
     
-              <Text style={styles.pullToRefreshText}>
-                PRESS the "See Your Image!" button THEN PULL DOWN to VIEW your files  
-              </Text>
     
               <TouchableOpacity
                 style={styles.downloadButton}

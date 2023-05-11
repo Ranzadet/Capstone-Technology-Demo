@@ -9,9 +9,11 @@ import HomeScreen from './screens/HomeScreen'
 // import FileUpload2 from './screens/FileUpload2'
 import UploadScreen from './screens/UploadScreen'
 import UploadScreenManual from './screens/UploadScreenManual'
+import UploadScreenCombined from './screens/UploadScreenCombined';
 import DownloadScreen from './screens/DownloadScreen'
 import SignupScreen from './screens/Signup'
 import ResetPassword from './screens/ResetPassword'
+import SyncScreen from './screens/SyncScreen';
 const Stack = createNativeStackNavigator();
 
 // export default function App() {
@@ -34,13 +36,10 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen}/>
         <Stack.Screen name="ResetPassword" component={ResetPassword}/>
         <Stack.Screen name="Signup" component={SignupScreen}/>
-        {/* <Stack.Screen options={{ headerShown: false }} name="Login" component={LoginScreen} /> */}
-        <Stack.Screen name="Home" component={HomeScreen} />
-        {/* <Stack.Screen name="FileUpload" component={FileUpload} />
-        <Stack.Screen name="FileUpload2" component={FileUpload2} /> */}
-        <Stack.Screen name="UploadScreen" component={UploadScreen} />
-        <Stack.Screen name="UploadScreenManual" component={UploadScreenManual} />
         <Stack.Screen name="Manage Files" component={DownloadScreen} />
+        <Stack.Screen name="Home" component={HomeScreen}/>
+        <Stack.Screen name="UploadScreenCombined" component={UploadScreenCombined} />
+        <Stack.Screen name="SyncScreen" component={SyncScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
