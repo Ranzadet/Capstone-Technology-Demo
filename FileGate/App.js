@@ -40,7 +40,7 @@ export default function App() {
         <Stack.Screen name="FileUpload2" component={FileUpload2} /> */}
         <Stack.Screen name="UploadScreen" component={UploadScreen} />
         <Stack.Screen name="UploadScreenManual" component={UploadScreenManual} />
-        <Stack.Screen name="DownloadScreen" component={DownloadScreen} />
+        <Stack.Screen name="Manage Files" component={DownloadScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -28,15 +28,7 @@ const LoginScreen = () => {
 
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(user => {
-            if (user && user.emailVerified) {
-                navigation.replace("Home");
-            }
-            // else if (user){
-            //     Alert.alert("verify email");
-            // }
-            // else{
-            //     Alert.alert("Not a Valid Account");
-            // }
+            
         })
 
         return () => {
@@ -57,8 +49,17 @@ const LoginScreen = () => {
                 stealUserInfo();
                 //console.log("User id: ", user.uid);
                 console.log("Logged in with: ", user.email);
+                if (user && user.emailVerified) {
+                    navigation.replace("Home");
+                }
+                else {
+                    Alert.alert("Please Verify Your Email");
+                }
+                // else{
+                //     Alert.alert("Not a Valid Account");
+                // }
             })
-            .catch(error => Alert.alert("Verify Account"))
+            .catch(error => Alert.alert("Invalid Login Information"))
     }
 
     const stealUserInfo = async () => {

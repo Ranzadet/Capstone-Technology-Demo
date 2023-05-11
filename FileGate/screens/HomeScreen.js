@@ -213,11 +213,11 @@ const HomeScreen = () => {
     </TouchableOpacity>
     <TouchableOpacity
     onPress={() => {
-    navigation.navigate('DownloadScreen');
+    navigation.navigate('Manage Files');
     }}
     style={styles.button}
     >
-    <Text style={styles.buttonText}>Download Files</Text>
+    <Text style={styles.buttonText}>Manage Files</Text>
     </TouchableOpacity>
     </View>
     </View>
