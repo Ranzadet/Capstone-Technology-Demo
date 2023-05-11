@@ -7,6 +7,7 @@ import {doc, setDoc, updateDoc, getDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
+import Checkbox from 'expo-checkbox'
 import {userinfo} from './LoginScreen'
 
 const UploadScreenCombined = () => {
@@ -26,6 +27,8 @@ const UploadScreenCombined = () => {
     const [latitudeDialogVisible, setLatitudeDialogVisible] = useState(false);
     const [longitudeDialogVisible, setLongitudeDialogVisible] = useState(false);
     const [dateDialogVisible, setDateDialogVisible] = useState(false);
+    
+    const [toggleCheckBox, setToggleCheckBox] = useState(false);
 
     // const requestQueue = []; // an array to store pending requests
     // let isFetching = false; // a flag to track whether a request is currently being fetched
@@ -52,13 +55,14 @@ const UploadScreenCombined = () => {
       console.log("Latitude: " + metadata.latitude);
       console.log("Longitude: " + metadata.longitude);
       console.log("Date: " + metadata.date);
+      console.log("Checkbox: " + toggleCheckBox);
       if (image) {
         setImageButtonVisible(true);
       }
       else {
         setImageButtonVisible(false);
       }
-    }, [image, metadata])
+    }, [image, metadata, toggleCheckBox])
 
     function isDateBetween(dateStr, startStr, endStr) {
       const date = new Date(dateStr);
@@ -203,7 +207,7 @@ const UploadScreenCombined = () => {
             const name = String(uploadTime + "_" + mseconds);
             
             let weatherList;
-            if(metadata.date != "NotFound"){
+            if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
               weatherList = await submitForWeather();
             }
             else{
@@ -282,17 +286,17 @@ const UploadScreenCombined = () => {
     
 
     // get date in format yyyy-mm-dd
-    const today = date;
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const formattedDate = `${year}-${month}-${day}`;
-    console.log("date: " + formattedDate);
-
-    // const timestampString = metadata.date;
-    // const date = new Date(timestampString.replace(/:/g, "-").substring(0, 10));
-    // const formattedDate = date.toISOString().substring(0, 10);
+    // const today = date;
+    // const year = today.getFullYear();
+    // const month = String(today.getMonth() + 1).padStart(2, '0');
+    // const day = String(today.getDate()).padStart(2, '0');
+    // const formattedDate = `${year}-${month}-${day}`;
     // console.log("date: " + formattedDate);
+
+    const timestampString = metadata.date;
+    const date = new Date(timestampString.replace(/:/g, "-").substring(0, 10));
+    const formattedDate = date.toISOString().substring(0, 10);
+    console.log("date: " + formattedDate);
 
     // let station1id = "";
     // let station2id = "";
@@ -487,6 +491,11 @@ const UploadScreenCombined = () => {
     setDialogVisible(true);
   }
 
+  // const switchCheckbox = () => {
+  //   const checked = toggleCheckBox;
+  //   setToggleCheckBox(!checked);
+  // }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -503,6 +512,24 @@ const UploadScreenCombined = () => {
             <Text style={styles.imagePickerButtonText}>Pick an image</Text>
           </TouchableOpacity>
         )}
+      </View>
+
+      <View style={{ flexDirection: 'row', alignItems: 'center'}}>
+        <Checkbox
+          style={{ width: 30, height: 30}}
+          disabled={false}
+          value={toggleCheckBox}
+          onValueChange={setToggleCheckBox}
+        />
+        <Text style={{ fontSize: 16, paddingLeft: 10 }}>
+          Run without uploading weather data?
+        </Text>
+      </View>
+
+      <View style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center'}}>
+        <Text style={{ flex: 0.8, fontSize: 12, textAlign: 'center' }}>
+          This option is recommended for images taken within the last 30 days as historical weather data is less likely to exist.
+        </Text>
       </View>
 
       {/* Upload Button */}

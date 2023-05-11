@@ -6,9 +6,9 @@ import {doc, setDoc, updateDoc, getDoc} from 'firebase/firestore'
 import {db} from '../firebase'
 import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
-import Exif from 'react-native-exif';
-import MediaMeta from 'react-native-media-meta';
-import Geolocation from 'react-native-get-location';
+// import Exif from 'react-native-exif';
+// import MediaMeta from 'react-native-media-meta';
+// import Geolocation from 'react-natives-get-location';
 
 const UploadScreen = () => {
     const [image, setImage] = useState(null);
