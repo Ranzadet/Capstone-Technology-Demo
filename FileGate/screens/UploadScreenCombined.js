@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, TextInput, Button, Image } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { ConfirmDialog, Dialog } from 'react-native-simple-dialogs'
 import { firebase } from '../config'
@@ -9,8 +9,11 @@ import { stringify } from '@firebase/util'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import Checkbox from 'expo-checkbox'
 import {userinfo} from './LoginScreen'
+import { UploadContext } from './UploadContext';
+
 
 const UploadScreenCombined = () => {
+    const { uploadState, setUploadState } = useContext(UploadContext);
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [metadata, setMetadata] = useState({})
@@ -90,6 +93,8 @@ const UploadScreenCombined = () => {
       }
     
     function pickImageCont(result) {
+
+      console.log("Value of uploading:::", uploadState);
 
       /* METADATA */
       console.log("Userid: ", userinfo.userID);
@@ -183,6 +188,7 @@ const UploadScreenCombined = () => {
         setDateDialogVisible(true);
       }
 
+
     }
 
     function runPromise(func){
@@ -193,6 +199,7 @@ const UploadScreenCombined = () => {
 
     const uploadImage = async () => {
         setUploading(true);
+        setUploadState(1);
         Alert.alert("Your file has been processed for uploading! Do not close out of the app.");
         const response = await fetch(image.uri);
         const blob = await response.blob();
@@ -240,6 +247,7 @@ const UploadScreenCombined = () => {
                 });
               })).then(() => {
                 setUploading(false);
+                setUploadState(2);
                 Alert.alert('Image/video upload successful!');
                 setImage(null);
               });
@@ -269,6 +277,8 @@ const UploadScreenCombined = () => {
                 });
               })).then(() => {
                 setUploading(false);
+                setUploadState(2);
+                console.log("Finished upload");
                 Alert.alert('Image/video upload successful!');
                 setImage(null);
               });
