@@ -264,9 +264,17 @@ const DownloadScreen = () => {
             <ScrollView refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
+            <View style={styles.header}>
+                <Text style={styles.title}>Manage Files</Text>  
+            </View>
+            <TouchableOpacity
+                style={styles.downloadButton}
+                onPress={downloadImage}>
+                <Text style={styles.buttonText}>See Your Images!</Text>
+              </TouchableOpacity>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
-                <View>
-                    {downloadCount == userinfo.uploadCount && Object.keys(metaView).map(key => 
+                <View style={styles.metaViewContainer}>
+                    {(userinfo.admin || (downloadCount == userinfo.uploadCount)) && Object.keys(metaView).map(key => 
                         <View>
                         <Text>{key}:</Text>
                         {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
@@ -282,16 +290,11 @@ const DownloadScreen = () => {
                         </View>
                     )}
 
-                    {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.buttonStyle3} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
-
-                {/* {Object.keys(metaView).map(key => (
-                    <View style={styles.container} key={key}>
-                        <Text>{key}: {String(metaView[key])}</Text>
-                    </View>
-                ))} */}
-                    
-                    {clickedImage && <TouchableOpacity style={styles.buttonStyle2} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
                 </View> 
+
+                {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
+                    
+                {clickedImage && <TouchableOpacity style={styles.updateButton} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
                 
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
                     <Text style={styles.textStyle}>
@@ -303,7 +306,7 @@ const DownloadScreen = () => {
                     {console.log("Images count: ", images2)}
                     {console.log("Metaview (after):", metaView)}
                     {images2.map(image => 
-                       <View key={image}><Pressable onPress={() => {updateMeta(images2.indexOf(image));}}><Image source={{ uri: image}} style={{width: 300, height: 300}} key={image} /></Pressable></View>)
+                       <View key={image} style={styles.imageBox}><Pressable onPress={() => {updateMeta(images2.indexOf(image));}}><Image source={{ uri: image}} style={styles.image} key={image} /></Pressable></View>)
                     }
                     {/* <TextInput
                         placeholder="Image Name"
@@ -311,19 +314,9 @@ const DownloadScreen = () => {
                         onChangeText={text => setEmail(text)}
                         style={styles.input}
                     /> */}
-                    <Text>Pull to refresh after pressing button</Text>
-                    <TouchableOpacity style={styles.buttonStyle} onPress={() => {downloadImage();}}>
-                        <Text style={styles.textStyle}>
-                            See Your Images!
-                        </Text>
-                    </TouchableOpacity>
-
                     
                 </View>
             </ScrollView>
-
-            {/* <Text>{downloadCount}</Text>
-            <Text>{userinfo.uploadCount}</Text> */}
             
         </SafeAreaView>
     )
