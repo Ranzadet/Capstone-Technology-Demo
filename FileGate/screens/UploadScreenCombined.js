@@ -198,128 +198,73 @@ const UploadScreenCombined = () => {
     }
 
     const uploadImage = async () => {
-        setUploading(true);
-        setUploadState(1);
-        Alert.alert("Your file has been processed for uploading! Do not close out of the app.");
-        const response = await fetch(image.uri);
-        const blob = await response.blob();
-        const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
-        var ref = firebase.storage().ref().child(filename).put(blob);
+      setUploading(true);
+      if(!toggleCheckBox)
+        Alert.alert("Your upload is being processed. Please do not close out of the app until the upload is complete. You may move onto other tasks while it is running.")
+      const response = await fetch(image.uri);
+      const blob = await response.blob();
+      const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
+      var ref = firebase.storage().ref().child(filename).put(blob);
 
-        try {
-            await ref;
-            console.log("ref: " + ref.snapshot);
-            
-            // await storageRef;
-        } catch (e) {
-            console.log(e);
-        }
-        try{
-            console.log(metadata);
-            console.log(filepath);
-            const mseconds = String(Date.now());
-            const name = String(uploadTime + "_" + mseconds);
-            
-            let weatherList;
-            if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
-              runPromise(runPromise(runPromise(runPromise(runPromise(submitForWeather).then((weatherList) => {
-                setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
-                  uploadTime: uploadTime, uploader: uploader, 
-                  weather: weatherList});
-              })).then(() => {
-                const uid = String(userinfo.userID);
-                const docRef = doc(db, "Userinfo", uid);
-                return getDoc(docRef);
-              })).then((docSnap) => {
-                let count = 0;
-                
-                if (docSnap.exists()) {
-                    console.log("Upload count (previous):", docSnap.data().uploadCount);
-                    count = docSnap.data().uploadCount;
-                } else {
-                // doc.data() will be undefined in this case
-                }
-                return count;
-              })).then((count) => {
-                //Update the uploaded document counter for user
-                updateDoc(docRef, {
-                  uploadCount: count + 1
-                });
-              })).then(() => {
-                setUploading(false);
-                setUploadState(2);
-                Alert.alert('Image/video upload successful!');
-                setImage(null);
-              });
-            }
-            else{
-              weatherList = {};
-                runPromise(runPromise(runPromise(setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
-                    uploadTime: uploadTime, uploader: uploader, 
-                    weather: weatherList}).then(() => {
-                  const uid = String(userinfo.userID);
-                  const docRef = doc(db, "Userinfo", uid);
-                  return getDoc(docRef);
-              })).then((docSnap) => {
-                let count = 0;
-                
-                if (docSnap.exists()) {
-                    console.log("Upload count (previous):", docSnap.data().uploadCount);
-                    count = docSnap.data().uploadCount;
-                } else {
-                // doc.data() will be undefined in this case
-                }
-                return count;
-              })).then((count) => {
-                //Update the uploaded document counter for user
-                updateDoc(docRef, {
-                  uploadCount: count + 1
-                });
-              })).then(() => {
-                setUploading(false);
-                setUploadState(2);
-                console.log("Finished upload");
-                Alert.alert('Image/video upload successful!');
-                setImage(null);
-              });
-            }
+      try {
+          await ref;
+          console.log("ref: " + ref.snapshot);
+          
+          // await storageRef;
+      } catch (e) {
+          console.log(e);
+      }
+      try{
+          console.log(metadata);
+          console.log(filepath);
+          const mseconds = String(Date.now());
+          const name = String(uploadTime + "_" + mseconds);
+          
+          let weatherList;
+          if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
+            weatherList = await submitForWeather();
+          }
+          else{
+            weatherList = {};
+          }
 
-            
-            // setWeather(weatherList);
-            // setWeather(await submitForWeather(), async () => {
-            //     console.log("Weather: \n" + weather);
-            //     await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
-            //         uploadTime: uploadTime, uploader: uploader, 
-            //         weather: weather});
-            // });
-            // await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
-            //     uploadTime: uploadTime, uploader: uploader, 
-            //     weather: weatherList});
+          
+          // setWeather(weatherList);
+          // setWeather(await submitForWeather(), async () => {
+          //     console.log("Weather: \n" + weather);
+          //     await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
+          //         uploadTime: uploadTime, uploader: uploader, 
+          //         weather: weather});
+          // });
+          await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
+              uploadTime: uploadTime, uploader: uploader, 
+              weather: weatherList});
 
-            // const uid = String(userinfo.userID);
-            // const docRef = doc(db, "Userinfo", uid);
-            // const docSnap = await getDoc(docRef);
-            // let count = 0;
-            
-            // if (docSnap.exists()) {
-            //     console.log("Upload count (previous):", docSnap.data().uploadCount);
-            //     count = docSnap.data().uploadCount;
-            // } else {
-            // // doc.data() will be undefined in this case
-            // }
-            // //Update the uploaded document counter for user
-            // await updateDoc(docRef, {
-            //     uploadCount: count + 1
-            //   });
-        }
-        catch(e){
-            console.log(e);
-            console.log(e.stack);
-        }
-        // setUploading(false);
-        // Alert.alert('Image/video upload successful!');
-        // setImage(null);
-    };
+          const uid = String(userinfo.userID);
+          const docRef = doc(db, "Userinfo", uid);
+          const docSnap = await getDoc(docRef);
+          let count = 0;
+          
+          if (docSnap.exists()) {
+              console.log("Upload count (previous):", docSnap.data().uploadCount);
+              count = docSnap.data().uploadCount;
+          } else {
+          // doc.data() will be undefined in this case
+          }
+          //Update the uploaded document counter for user
+          await updateDoc(docRef, {
+              uploadCount: count + 1
+            });
+      }
+      catch(e){
+          console.log(e);
+          console.log(e.stack);
+      }
+      setUploading(false);
+      Alert.alert('Image/video upload successful!');
+      setImage(null);
+  };
+
 
   function isEmpty(obj) {
       return Object.keys(obj).length === 0;
