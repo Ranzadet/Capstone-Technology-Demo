@@ -162,7 +162,7 @@ const UploadScreenCombined = () => {
           return new Promise(resolve => setTimeout(resolve, time));
         }
         
-      delay(1000).then(() => console.log(''));
+      //delay(1000).then(() => console.log('after delay'));
 
       console.log(metadata);
       console.log("Filepath: ", filepath);
@@ -185,8 +185,15 @@ const UploadScreenCombined = () => {
 
     }
 
+    function runPromise(func){
+      return new Promise((resolve, reject) => {
+        resolve(func());
+      })
+    }
+
     const uploadImage = async () => {
         setUploading(true);
+        Alert.alert("Your file has been processed for uploading! Do not close out of the app.");
         const response = await fetch(image.uri);
         const blob = await response.blob();
         const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
@@ -208,10 +215,63 @@ const UploadScreenCombined = () => {
             
             let weatherList;
             if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
-              weatherList = await submitForWeather();
+              runPromise(runPromise(runPromise(runPromise(runPromise(submitForWeather).then((weatherList) => {
+                setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
+                  uploadTime: uploadTime, uploader: uploader, 
+                  weather: weatherList});
+              })).then(() => {
+                const uid = String(userinfo.userID);
+                const docRef = doc(db, "Userinfo", uid);
+                return getDoc(docRef);
+              })).then((docSnap) => {
+                let count = 0;
+                
+                if (docSnap.exists()) {
+                    console.log("Upload count (previous):", docSnap.data().uploadCount);
+                    count = docSnap.data().uploadCount;
+                } else {
+                // doc.data() will be undefined in this case
+                }
+                return count;
+              })).then((count) => {
+                //Update the uploaded document counter for user
+                updateDoc(docRef, {
+                  uploadCount: count + 1
+                });
+              })).then(() => {
+                setUploading(false);
+                Alert.alert('Image/video upload successful!');
+                setImage(null);
+              });
             }
             else{
               weatherList = {};
+                runPromise(runPromise(runPromise(setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
+                    uploadTime: uploadTime, uploader: uploader, 
+                    weather: weatherList}).then(() => {
+                  const uid = String(userinfo.userID);
+                  const docRef = doc(db, "Userinfo", uid);
+                  return getDoc(docRef);
+              })).then((docSnap) => {
+                let count = 0;
+                
+                if (docSnap.exists()) {
+                    console.log("Upload count (previous):", docSnap.data().uploadCount);
+                    count = docSnap.data().uploadCount;
+                } else {
+                // doc.data() will be undefined in this case
+                }
+                return count;
+              })).then((count) => {
+                //Update the uploaded document counter for user
+                updateDoc(docRef, {
+                  uploadCount: count + 1
+                });
+              })).then(() => {
+                setUploading(false);
+                Alert.alert('Image/video upload successful!');
+                setImage(null);
+              });
             }
 
             
@@ -222,33 +282,33 @@ const UploadScreenCombined = () => {
             //         uploadTime: uploadTime, uploader: uploader, 
             //         weather: weather});
             // });
-            await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
-                uploadTime: uploadTime, uploader: uploader, 
-                weather: weatherList});
+            // await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
+            //     uploadTime: uploadTime, uploader: uploader, 
+            //     weather: weatherList});
 
-            const uid = String(userinfo.userID);
-            const docRef = doc(db, "Userinfo", uid);
-            const docSnap = await getDoc(docRef);
-            let count = 0;
+            // const uid = String(userinfo.userID);
+            // const docRef = doc(db, "Userinfo", uid);
+            // const docSnap = await getDoc(docRef);
+            // let count = 0;
             
-            if (docSnap.exists()) {
-                console.log("Upload count (previous):", docSnap.data().uploadCount);
-                count = docSnap.data().uploadCount;
-            } else {
-            // doc.data() will be undefined in this case
-            }
-            //Update the uploaded document counter for user
-            await updateDoc(docRef, {
-                uploadCount: count + 1
-              });
+            // if (docSnap.exists()) {
+            //     console.log("Upload count (previous):", docSnap.data().uploadCount);
+            //     count = docSnap.data().uploadCount;
+            // } else {
+            // // doc.data() will be undefined in this case
+            // }
+            // //Update the uploaded document counter for user
+            // await updateDoc(docRef, {
+            //     uploadCount: count + 1
+            //   });
         }
         catch(e){
             console.log(e);
             console.log(e.stack);
         }
-        setUploading(false);
-        Alert.alert('Image/video upload successful!');
-        setImage(null);
+        // setUploading(false);
+        // Alert.alert('Image/video upload successful!');
+        // setImage(null);
     };
 
   function isEmpty(obj) {
@@ -540,11 +600,11 @@ const UploadScreenCombined = () => {
       ) : null}
 
       {/* Uploading Indicator */}
-      {uploading && (
+      {/* {uploading && (
         <View style={styles.uploadingIndicator}>
           <Text style={styles.uploadingText}>Uploading...</Text>
         </View>
-      )}
+      )} */}
 
       {/* <TouchableOpacity style={styles.uploadButton} onPress={makeDialogVisible}>
         <Text style={styles.uploadButtonText}>Dialog</Text>
