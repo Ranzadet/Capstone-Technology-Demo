@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import {userinfo} from './LoginScreen'
 import axios from 'axios'
+import {uploading} from './UploadScreenCombined'
 
 const SyncScreen = () => {
 

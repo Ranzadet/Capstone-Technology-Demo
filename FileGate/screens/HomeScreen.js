@@ -1,10 +1,12 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useState, useContext} from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { auth } from '../firebase';
 import { userinfo } from './LoginScreen'
+import { UploadContext } from './UploadContext';
 
-const HomeScreen = () => {
+const HomeScreen = (props) => {
+  const { uploadState, setUploadState } = useContext(UploadContext);
   const [adminVar, setAdminVar] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const navigation = useNavigation();
@@ -34,6 +36,11 @@ const HomeScreen = () => {
     // Clean up the interval when the component is unmounted
     return () => clearInterval(interval);
   }, []);
+
+  const uploadAlert = () => {
+    Alert.alert("Upload Complete!");
+    setUploadState(0);
+  }
   
   return (
     <View style={styles.container}>
@@ -41,6 +48,7 @@ const HomeScreen = () => {
     <Text style={styles.logo}> FileGate </Text>
     </View>
     <Text style={styles.email}>Welcome, {userEmail}!</Text>
+    {uploadState === 1 && <Text>Upload In progress!</Text>}
     <View style={styles.buttonsContainer}>
     {/* <TouchableOpacity
           onPress={() => {

@@ -235,7 +235,7 @@ const DownloadScreen = () => {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
             <View style={styles.header}>
-                <Text style={styles.title}>Manage Files</Text>
+                <Text style={styles.title}>Manage Files</Text>  
             </View>
             <TouchableOpacity
                 style={styles.downloadButton}
