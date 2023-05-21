@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, TextInput, Button, Image } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { ConfirmDialog, Dialog } from 'react-native-simple-dialogs'
 import { firebase } from '../config'
@@ -9,8 +9,11 @@ import { stringify } from '@firebase/util'
 import RNDateTimePicker from '@react-native-community/datetimepicker'
 import Checkbox from 'expo-checkbox'
 import {userinfo} from './LoginScreen'
+import { UploadContext } from './UploadContext';
+
 
 const UploadScreenCombined = () => {
+    const { uploadState, setUploadState } = useContext(UploadContext);
     const [image, setImage] = useState(null);
     const [uploading, setUploading] = useState(false);
     const [metadata, setMetadata] = useState({})
@@ -91,6 +94,8 @@ const UploadScreenCombined = () => {
     
     function pickImageCont(result) {
 
+      console.log("Value of uploading:::", uploadState);
+
       /* METADATA */
       console.log("Userid: ", userinfo.userID);
       console.log("Email: ", userinfo.email);
@@ -162,7 +167,7 @@ const UploadScreenCombined = () => {
           return new Promise(resolve => setTimeout(resolve, time));
         }
         
-      delay(1000).then(() => console.log(''));
+      //delay(1000).then(() => console.log('after delay'));
 
       console.log(metadata);
       console.log("Filepath: ", filepath);
@@ -183,73 +188,85 @@ const UploadScreenCombined = () => {
         setDateDialogVisible(true);
       }
 
+
+    }
+
+    function runPromise(func){
+      return new Promise((resolve, reject) => {
+        resolve(func());
+      })
     }
 
     const uploadImage = async () => {
-        setUploading(true);
-        const response = await fetch(image.uri);
-        const blob = await response.blob();
-        const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
-        var ref = firebase.storage().ref().child(filename).put(blob);
+      setUploading(true);
+      if(!toggleCheckBox)
+        Alert.alert("Your upload is being processed. Please do not close out of the app until the upload is complete. You may move onto other tasks while it is running.");
+      setImage(null); 
+      const response = await fetch(image.uri);
+      const blob = await response.blob();
+      const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
+      var ref = firebase.storage().ref().child(filename).put(blob);
 
-        try {
-            await ref;
-            console.log("ref: " + ref.snapshot);
-            
-            // await storageRef;
-        } catch (e) {
-            console.log(e);
-        }
-        try{
-            console.log(metadata);
-            console.log(filepath);
-            const mseconds = String(Date.now());
-            const name = String(uploadTime + "_" + mseconds);
-            
-            let weatherList;
-            if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
-              weatherList = await submitForWeather();
-            }
-            else{
-              weatherList = {};
-            }
+      try {
+          await ref;
+          console.log("ref: " + ref.snapshot);
 
-            
-            // setWeather(weatherList);
-            // setWeather(await submitForWeather(), async () => {
-            //     console.log("Weather: \n" + weather);
-            //     await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
-            //         uploadTime: uploadTime, uploader: uploader, 
-            //         weather: weather});
-            // });
-            await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
-                uploadTime: uploadTime, uploader: uploader, 
-                weather: weatherList});
+          
+          // await storageRef;
+      } catch (e) {
+          console.log(e);
+      }
+      try{
+          console.log(metadata);
+          console.log(filepath);
+          const mseconds = String(Date.now());
+          const name = String(uploadTime + "_" + mseconds);
+          
+          let weatherList;
+          if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
+            weatherList = await submitForWeather();
+          }
+          else{
+            weatherList = {};
+          }
 
-            const uid = String(userinfo.userID);
-            const docRef = doc(db, "Userinfo", uid);
-            const docSnap = await getDoc(docRef);
-            let count = 0;
-            
-            if (docSnap.exists()) {
-                console.log("Upload count (previous):", docSnap.data().uploadCount);
-                count = docSnap.data().uploadCount;
-            } else {
-            // doc.data() will be undefined in this case
-            }
-            //Update the uploaded document counter for user
-            await updateDoc(docRef, {
-                uploadCount: count + 1
-              });
-        }
-        catch(e){
-            console.log(e);
-            console.log(e.stack);
-        }
-        setUploading(false);
-        Alert.alert('Image/video upload successful!');
-        setImage(null);
-    };
+          
+          // setWeather(weatherList);
+          // setWeather(await submitForWeather(), async () => {
+          //     console.log("Weather: \n" + weather);
+          //     await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
+          //         uploadTime: uploadTime, uploader: uploader, 
+          //         weather: weather});
+          // });
+          await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
+              uploadTime: uploadTime, uploader: uploader, 
+              weather: weatherList});
+
+          const uid = String(userinfo.userID);
+          const docRef = doc(db, "Userinfo", uid);
+          const docSnap = await getDoc(docRef);
+          let count = 0;
+          
+          if (docSnap.exists()) {
+              console.log("Upload count (previous):", docSnap.data().uploadCount);
+              count = docSnap.data().uploadCount;
+          } else {
+          // doc.data() will be undefined in this case
+          }
+          //Update the uploaded document counter for user
+          await updateDoc(docRef, {
+              uploadCount: count + 1
+            });
+      }
+      catch(e){
+          console.log(e);
+          console.log(e.stack);
+      }
+      setUploading(false);
+      Alert.alert('Image/video upload successful!');
+      setImage(null);
+  };
+
 
   function isEmpty(obj) {
       return Object.keys(obj).length === 0;
@@ -540,11 +557,11 @@ const UploadScreenCombined = () => {
       ) : null}
 
       {/* Uploading Indicator */}
-      {uploading && (
+      {/* {uploading && (
         <View style={styles.uploadingIndicator}>
           <Text style={styles.uploadingText}>Uploading...</Text>
         </View>
-      )}
+      )} */}
 
       {/* <TouchableOpacity style={styles.uploadButton} onPress={makeDialogVisible}>
         <Text style={styles.uploadButtonText}>Dialog</Text>
