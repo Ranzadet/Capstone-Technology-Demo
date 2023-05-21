@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import {userinfo} from './LoginScreen'
 import axios from 'axios'
+import {doc, setDoc, updateDoc, getDoc} from 'firebase/firestore'
+import {db} from '../firebase'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const SyncScreen = () => {
@@ -16,12 +18,15 @@ const SyncScreen = () => {
 
     const retrieveSavedTime = async () => {
         try {
-          const time = await AsyncStorage.getItem('clickTime');
-          console.log("Time outside: ", time);
-          if (time !== null) {
+        //   const time = await AsyncStorage.getItem('clickTime');
+        const docRef = doc(db, "globalVars", "LastSync");
+        const docSnap = await getDoc(docRef);
+        const time = docSnap.data().time;
+        console.log("Time outside: ", time);
+        if (time !== null) {
             console.log("Time inside: ", formatDate(time));
             setSavedTime(formatDate(time));
-          }
+        }
         } catch (error) {
           console.error('Error retrieving saved time:', error);
         }
@@ -58,9 +63,10 @@ const SyncScreen = () => {
             console.log("start sync")
             await axios.post(url);
             console.log("synced")
-
             const currentTime = new Date().getTime().toString();
-            await AsyncStorage.setItem('clickTime', currentTime);
+            // await AsyncStorage.setItem('clickTime', currentTime);
+            const docRef = doc(db, "globalVars", "LastSync");
+            await updateDoc(docRef, {time:currentTime});
             console.log('Click time saved successfully:', currentTime);
             setTimeChanged(true);
         }
