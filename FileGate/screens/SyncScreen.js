@@ -58,9 +58,10 @@ const SyncScreen = () => {
     };
 
     const handleSync = async () => {
-        const url = 'https://script.google.com/macros/s/AKfycbzXhGCmhQ6nEBl6dJ1kn0oJqTCLrqnkc5Hk215nJrHZMhZnxzBObBbBhaBuM0wvD4D0_w/exec';
+        const url = 'https://script.google.com/macros/s/AKfycbyxZ91BFSlEKz2sgiPiZLUXGVyr4UGoCbN824sLZ77rL57jcJcA3osF-NY62Re7x2Af/exec';
         try {
-            console.log("start sync")
+            console.log("start sync");
+            //insert existing data
             await axios.post(url);
             console.log("synced")
             const currentTime = new Date().getTime().toString();
