@@ -200,8 +200,7 @@ const UploadScreenCombined = () => {
 
     const uploadImage = async () => {
       setUploading(true);
-      if(!toggleCheckBox)
-        Alert.alert("Your upload is being processed. Please do not close out of the app until the upload is complete. You may move onto other tasks while it is running.");
+      Alert.alert("Your upload is being processed. Please do not close out of the app until the upload is complete. You may move onto other tasks while it is running.");
       setImage(null); 
       setUploadName("");
       const response = await fetch(image.uri);
