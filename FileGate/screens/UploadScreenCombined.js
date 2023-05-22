@@ -222,8 +222,14 @@ const UploadScreenCombined = () => {
           console.log(metadata);
           console.log(filepath);
           const mseconds = String(Date.now());
-          // const name = String(uploadTime + "_" + mseconds);
-          const name = String(uploadTime + "_" + uploadName);
+          let name;
+          if(uploadName != ""){
+            name = String(uploadTime + "_" + uploadName);
+          }
+          else{
+            name = String(uploadTime + "_" + mseconds);
+          }
+            
           
           let weatherList;
           if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
