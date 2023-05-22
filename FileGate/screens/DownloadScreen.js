@@ -262,8 +262,8 @@ const DownloadScreen = () => {
 
                 </View> 
 
-                {(clickedImage && metaView && userinfo.admin) ? <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
-                    
+                {(clickedImage && metaView) ? <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
+                {/* If you want to allow only admins to delete images, insert "&& userinfo.admin" into the conditional above*/}
                 {clickedImage && <TouchableOpacity style={styles.updateButton} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
                 
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
