@@ -35,7 +35,7 @@ const UploadScreenCombined = () => {
 
     // const requestQueue = []; // an array to store pending requests
     // let isFetching = false; // a flag to track whether a request is currently being fetched
-    const RATE_LIMIT_DELAY = 500; // the minimum delay between requests, in milliseconds
+    const RATE_LIMIT_DELAY = 750; // the minimum delay between requests, in milliseconds
 
     async function fetchWithRateLimit(url, options) {
         return new Promise((resolve, reject) => {
@@ -326,8 +326,8 @@ const UploadScreenCombined = () => {
 
     while (index < 3) {
 
-        console.log("2: while loop started");
-        console.log('https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=' + (lat-variance).toFixed(4) + ',' + (long-variance).toFixed(4) + ',' + (lat+variance).toFixed(4) + ',' + (long+variance).toFixed(4));
+        // console.log("2: while loop started, " + index);
+        // console.log('https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=' + (lat-variance).toFixed(4) + ',' + (long-variance).toFixed(4) + ',' + (lat+variance).toFixed(4) + ',' + (long+variance).toFixed(4));
 
         // https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=latitude-x,longitude-x,latitude+x,longitude+x
         let response = await fetchWithRateLimit('https://www.ncei.noaa.gov/cdo-web/api/v2/stations?extent=' + (lat-variance).toFixed(4) + ',' + (long-variance).toFixed(4) + ',' + (lat+variance).toFixed(4) + ',' + (long+variance).toFixed(4), {
@@ -338,16 +338,16 @@ const UploadScreenCombined = () => {
         });
         let json = await response.json();
 
-        console.log("3: json gotten from response");
-        console.log(json);
+        // console.log("3: json gotten from response");
+        // console.log(json);
 
         if (!isEmpty(json)) {
 
             for (let i = 0; i < json["results"].length; i++) {
                 let stationid = json["results"][i]["id"];
-                console.log("3.5: stationid is " + stationid);
+                // console.log("3.5: stationid is " + stationid);
                 if (!isDateBetween(formattedDate, json["results"][i]["mindate"], json["results"][i]["maxdate"]) || stationids.includes(stationid)) {
-                    console.log("3.6: stationid " + stationid + " ignored");
+                    // console.log("3.6: stationid " + stationid + " ignored");
                     continue;
                 }
                 //https://www.ncei.noaa.gov/cdo-web/api/v2/datasets?stationid=insertstationidhere
@@ -359,8 +359,8 @@ const UploadScreenCombined = () => {
                 });
                 let json2 = await response2.json();
 
-                console.log("4: json2 gotten from response");
-                console.log(json2);
+                // console.log("4: json2 gotten from response");
+                // console.log(json2);
 
                 if (!isEmpty(json2)) {
 
@@ -416,7 +416,7 @@ const UploadScreenCombined = () => {
 
     for (let i = 0; i < stationids.length; i++) { // needs some work
 
-        console.log("8: new for loop started");
+        // console.log("8: new for loop started");
 
         //https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=insertstationidhere&startdate=insertdatehere&enddate=insertdatehere
         let response3 = await fetchWithRateLimit('https://www.ncei.noaa.gov/cdo-web/api/v2/data?datasetid=GHCND&stationid=' + stationids[i]  + '&startdate=' + formattedDate + '&enddate=' + formattedDate, {
@@ -426,17 +426,17 @@ const UploadScreenCombined = () => {
             },
         });
         let json3 = await response3.json();
-        console.log("9: json3 gotten from response");
-        console.log(json3);
+        // console.log("9: json3 gotten from response");
+        // console.log(json3);
 
         if (!isEmpty(json3)) {
 
             const weatherList = json3["results"];
             // console.log(String(i) + ": " + weatherList.toString());
-            console.log(String(i) + ": " + JSON.stringify(weatherList));
+            // console.log(String(i) + ": " + JSON.stringify(weatherList));
             weatherLists[i] = JSON.stringify(weatherList);
 
-            console.log("10: weather added to weatherList");
+            // console.log("10: weather added to weatherList");
         }
     }
 
@@ -539,7 +539,7 @@ const UploadScreenCombined = () => {
           onValueChange={setToggleCheckBox}
         />
         <Text style={{ fontSize: 16, paddingLeft: 10 }}>
-          Run without uploading weather data?
+          Upload without weather data?
         </Text>
       </View>
 
