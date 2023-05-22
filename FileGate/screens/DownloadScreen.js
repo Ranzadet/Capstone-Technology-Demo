@@ -25,6 +25,9 @@ const DownloadScreen = () => {
     let renderCount = 0;
     const [downloadCount, setDownloadCount] = useState(false);
     const [clickedImage, setClickedImage] = useState(false);
+    const [fileNames, setFileNames] = useState({});
+    const [nameView, setNameView] = useState("");
+    const [imageMap, setImageMap] = useState({});
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -60,6 +63,8 @@ const DownloadScreen = () => {
         const newMeta = [];
         const newImages2 = [];
         const newImageCheck = [];
+        const tempNames = {};
+        const tempMap = {};
         let checkCount = 0;
         querySnapshot.forEach((doc) => {
         // doc.data() is never undefined for query doc snapshots
@@ -69,6 +74,7 @@ const DownloadScreen = () => {
                 console.log(doc.id, " => ", doc.data());
                 console.log(doc.data().filepath); //fetch(doc.data().filepath);
                 newMeta.push(doc.data());
+                tempNames[doc.data().filepath] = doc.id;
 
                 const birdRef = ref(storage, doc.data().filepath);
                 // Get the download URL
@@ -80,6 +86,7 @@ const DownloadScreen = () => {
                     //console.log("New arr2: ", arr2);
                     //setImages2(arr2);
                     newImages2.push(url);
+                    tempMap[doc.data().filepath] = url;
                     newImageCheck.push(doc.data().filepath);
                     console.log(url);
                     setDownloadCount(e => e+1);
@@ -92,13 +99,15 @@ const DownloadScreen = () => {
         setImages2(newImages2);
         setImageCheck(newImageCheck);
         setMetadata(newMeta);
+        setFileNames(tempNames);
+        setImageMap(tempMap);
 
         console.log("Database count: ", count);
         console.log("Actual Count: ", checkCount);
 
         if (checkCount != count){
             await updateDoc(usrRef, {uploadCount:checkCount});
-            console.log("updating doc");
+            console.log("Discrepency detected in upload count: updating userinfo");
         }
 
         // try{
@@ -124,6 +133,7 @@ const DownloadScreen = () => {
                 console.log("Data found: ", data);
                 setMetaView(data);
                 setUpdateData(!updateData);
+                setNameView(fileNames[data.filepath]);
             }
         });
 
@@ -195,6 +205,10 @@ const DownloadScreen = () => {
             console.log("Error deleting document! Could not find doc in list. ");
             console.log("Current MetaView: ", metaView);
         }
+        images2.splice(images2.indexOf(imageMap[metaView.filepath]),1);
+        setImages2(images2);
+        setMetaView(null);
+        setNameView("");
     }
 
     const textChangeMeta = (text, key)=> {
@@ -244,7 +258,8 @@ const DownloadScreen = () => {
               </TouchableOpacity>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
                 <View style={styles.metaViewContainer}>
-                    {(userinfo.admin || (downloadCount == userinfo.uploadCount)) && Object.keys(metaView).map(key => 
+                    {nameView != "" && <Text style={styles.imageName}>{nameView}</Text>}
+                    {(metaView != null && (userinfo.admin || (downloadCount == userinfo.uploadCount))) && Object.keys(metaView).map(key => 
                         <View>
                         <Text>{key}:</Text>
                         {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
@@ -256,7 +271,7 @@ const DownloadScreen = () => {
                             onSubmitEditing={(value) => {textChangeSub(value.nativeEvent.text, key, subObj)}}></TextInput>
                             </View>
                         )}
-                        {/*Current issue is that key is set as the first metaView value, but never changes to match new typed input values unless the component is re-rendered */}
+                        
                         </View>
                     )}
 
@@ -264,7 +279,7 @@ const DownloadScreen = () => {
 
                 {(clickedImage && metaView) ? <TouchableOpacity style={styles.deleteButton} onPress={deleteImage}><Text>Delete Image</Text></TouchableOpacity>:null}
                 {/* If you want to allow only admins to delete images, insert "&& userinfo.admin" into the conditional above*/}
-                {clickedImage && <TouchableOpacity style={styles.updateButton} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
+                {(clickedImage && metaView) && <TouchableOpacity style={styles.updateButton} onPress={() => {uploadImage();}}><Text>Update Metadata</Text></TouchableOpacity>}
                 
                 {/* <TouchableOpacity style={styles.buttonStyle} onPress={pickImage}>
                     <Text style={styles.textStyle}>
@@ -370,6 +385,10 @@ const styles = StyleSheet.create({
       padding: 10,
       borderRadius: 5,
       marginTop: 10,
+    },
+    imageName: {
+        color:"red",
+        fontSize:18,
     },
   });
   

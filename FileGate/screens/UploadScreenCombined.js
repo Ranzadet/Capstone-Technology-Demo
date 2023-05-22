@@ -25,6 +25,7 @@ const UploadScreenCombined = () => {
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
     const [date, setDate] = useState(new Date(new Date().toLocaleDateString()));
+    const [uploadName, setUploadName] = useState("");
 
     const [imageButtonVisible, setImageButtonVisible] = useState(false);
     const [latitudeDialogVisible, setLatitudeDialogVisible] = useState(false);
@@ -202,6 +203,7 @@ const UploadScreenCombined = () => {
       if(!toggleCheckBox)
         Alert.alert("Your upload is being processed. Please do not close out of the app until the upload is complete. You may move onto other tasks while it is running.");
       setImage(null); 
+      setUploadName("");
       const response = await fetch(image.uri);
       const blob = await response.blob();
       const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
@@ -220,7 +222,14 @@ const UploadScreenCombined = () => {
           console.log(metadata);
           console.log(filepath);
           const mseconds = String(Date.now());
-          const name = String(uploadTime + "_" + mseconds);
+          let name;
+          if(uploadName != ""){
+            name = String(uploadTime + "_" + uploadName);
+          }
+          else{
+            name = String(uploadTime + "_" + mseconds);
+          }
+            
           
           let weatherList;
           if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
@@ -264,7 +273,6 @@ const UploadScreenCombined = () => {
       }
       setUploading(false);
       Alert.alert('Image/video upload successful!');
-      setImage(null);
   };
 
 
@@ -549,6 +557,11 @@ const UploadScreenCombined = () => {
         </Text>
       </View>
 
+      <View style={{width:300}}>
+        <Text style={{marginTop:10}}>Name:</Text>
+        <TextInput value={uploadName} onChangeText={inputName => setUploadName(inputName)} style={styles.input} onSubmitEditing={(value) => {setUploadName(value.nativeEvent.text)}}></TextInput>
+      </View>
+
       {/* Upload Button */}
       {imageButtonVisible ? (
         <TouchableOpacity style={styles.uploadButton} onPress={uploadImage} disabled={!image}>
@@ -650,6 +663,13 @@ const styles = StyleSheet.create({
   backgroundColor: '#fff',
   alignItems: 'center',
   justifyContent: 'top',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
   },
   header: {
   width: '100%',
