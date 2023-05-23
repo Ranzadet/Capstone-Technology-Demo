@@ -8,6 +8,8 @@ import { stringify } from '@firebase/util'
 import {userinfo} from './LoginScreen'
 import {getStorage, ref, getDownloadURL, deleteObject} from 'firebase/storage'
 import { ScrollView } from 'react-native';
+import { submitForWeather } from './UploadScreenCombined';
+
 
 
 ``
@@ -28,6 +30,8 @@ const DownloadScreen = () => {
     const [fileNames, setFileNames] = useState({});
     const [nameView, setNameView] = useState("");
     const [imageMap, setImageMap] = useState({});
+    const [weatherDataChanged, setWeatherDataChanged] = useState(false);
+
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -147,6 +151,8 @@ const DownloadScreen = () => {
     }
 
     const uploadImage = async () =>{
+        if(weatherDataChanged)
+            Alert.alert("Your update is being processed. Please do not close out of the app until the update is complete. You may move onto other tasks while it is running.")
         const uid = String(userinfo.userID);
         const q = query(collection(db, "fdu-birds"));
         const querySnapshot = await getDocs(q);
@@ -161,24 +167,44 @@ const DownloadScreen = () => {
 
         if (docRef){
             console.log("Metaview at update: ", metaView);
+           
+            let weatherList;
+            if (weatherDataChanged){
+                console.log("Detected Change in Metadata");
+                console.log("Rerunning Weather Algorithm...");
+                try{
+                    weatherList = await submitForWeather(metaView.metadata);
+                    console.log("Weather Algorithm Success!");
+                }
+                catch (e){
+                    console.log("Weather Algorithm Failure.")
+                    console.log(e);
+                }
+            }
+            else{
+                weatherList = metaView.weather;
+            }
+
             console.log("Updating Document...");
             await updateDoc(doc(db, "fdu-birds", docRef), {
-                filepath: metaView.filepath, 
+                filepath: metaView.filepath,
                 uploadTime: metaView.uploadTime,
                 uploader: metaView.uploader,
-                weather: metaView.weather,
+                weather: weatherList,
                 metadata: metaView.metadata
             });
             console.log("Document Update Successful!");
             Alert.alert('Document update successful!');
+            setWeatherDataChanged(false);
         }
         else{
             console.log("Error updating document! Could not find doc in list. ");
             console.log("Current MetaView: ", metaView);
         }
-        
+       
         return;
     }
+
 
     const deleteImage = async () => {
         const uid = String(userinfo.userID);
@@ -235,12 +261,22 @@ const DownloadScreen = () => {
                     console.log(bigObj[subObj]);
                     console.log("New: ", text);
                     setMetaView(metaView);
+                    console.log(Object.keys(metaView)[i]);
+                    console.log(subObj);
+                    if (subObj === "latitude" || subObj === "longitude" || subObj === "date"){
+                        if(subObj !== "date"){
+                            bigObj[subObj] = Number(text);
+                        }
+                        setWeatherDataChanged(true);
+                        console.log("weather data changed! : ", Object.keys(metaView)[i]);
+                    }
                     // helpInput[Object.keys(helpInput)[i]] = text;
                     // setHelpInput(helpInput);
                 }
             }
         }
     }
+
 
     
     return (
