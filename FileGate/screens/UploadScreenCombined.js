@@ -12,29 +12,9 @@ import {userinfo} from './LoginScreen'
 import { UploadContext } from './UploadContext';
 
 
-const UploadScreenCombined = () => {
-    const { uploadState, setUploadState } = useContext(UploadContext);
-    const [image, setImage] = useState(null);
-    const [uploading, setUploading] = useState(false);
-    const [metadata, setMetadata] = useState({})
-    const [uploadTime, setUploadTime] = useState('')
-    const [uploader, setUploader] = useState('')
-    const [filepath, setFilepath] = useState('')
-    const [userPass, setUserPass] = useState('')
-    const [dialogVisible, setDialogVisible] = useState(false);
-    const [latitude, setLatitude] = useState(null);
-    const [longitude, setLongitude] = useState(null);
-    const [date, setDate] = useState(new Date(new Date().toLocaleDateString()));
-    const [uploadName, setUploadName] = useState("");
+  const submitForWeather = async (metadata) => {
 
-    const [imageButtonVisible, setImageButtonVisible] = useState(false);
-    const [latitudeDialogVisible, setLatitudeDialogVisible] = useState(false);
-    const [longitudeDialogVisible, setLongitudeDialogVisible] = useState(false);
-    const [dateDialogVisible, setDateDialogVisible] = useState(false);
-    
-    const [toggleCheckBox, setToggleCheckBox] = useState(false);
-
-    // const requestQueue = []; // an array to store pending requests
+       // const requestQueue = []; // an array to store pending requests
     // let isFetching = false; // a flag to track whether a request is currently being fetched
     const RATE_LIMIT_DELAY = 750; // the minimum delay between requests, in milliseconds
 
@@ -55,234 +35,15 @@ const UploadScreenCombined = () => {
         });
     }
 
-    useEffect(() => {
-      console.log("Latitude: " + metadata.latitude);
-      console.log("Longitude: " + metadata.longitude);
-      console.log("Date: " + metadata.date);
-      console.log("Checkbox: " + toggleCheckBox);
-      if (image) {
-        setImageButtonVisible(true);
-      }
-      else {
-        setImageButtonVisible(false);
-      }
-    }, [image, metadata, toggleCheckBox])
-
     function isDateBetween(dateStr, startStr, endStr) {
       const date = new Date(dateStr);
       const start = new Date(startStr);
       const end = new Date(endStr);
       return date >= start && date <= end;
     }
-    
-    function doesNotExist(x) {
-      return (x == undefined || x == null || x == "NotFound" || x == "");
-    }
 
-    const pickImage = async () => {
-        // No permissions request is necessary for launching the image library
-        let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: false,
-            aspect: [4, 3],
-            quality: 1,
-            exif:true
-        });
-        //console.log(result.assets);
-
-        pickImageCont(result);
-      }
-    
-    function pickImageCont(result) {
-
-      console.log("Value of uploading:::", uploadState);
-
-      /* METADATA */
-      console.log("Userid: ", userinfo.userID);
-      console.log("Email: ", userinfo.email);
-      console.log("Password: ", userinfo.password);
-      
-      const assets = result.assets[0]
-      console.log(assets)
-      const duration = assets.duration
-      let filExIndex = assets.uri.search(/\..*/);
-      const fileExtension = assets.uri.slice(filExIndex);
-      const uploadtime = new Date().toDateString();
-      const size = assets.fileSize;
-
-      let date;
-      let latitude;
-      let longitude;
-
-      if (assets.exif){
-          date = assets.exif.DateTimeOriginal;
-          latitude = assets.exif.GPSLatitude;
-          const latitudeSign = assets.exif.GPSLatitudeRef;
-          if (latitudeSign == 'S')
-              latitude = -latitude;
-          longitude = assets.exif.GPSLongitude;
-          const longitudeSign = assets.exif.GPSLongitudeRef;
-          if (longitudeSign == 'W')
-              longitude = -longitude;
-      }
-      else{
-        date = "NotFound";
-        latitude = "NotFound";
-        longitude = "NotFound";
-      }
-
-      // REACT NATIVE DIALOG ASKING FOR DATE
-      // REACT NATIVE DIALOG ASKING FOR LATITUDE
-      // REACT NATIVE DIALOG ASKING FOR LONGITUDE
-      console.log("latitude: " + latitude);
-      console.log("longitude: " + longitude);
-      console.log("date: " + date);
-      
-      console.log(assets)
-      console.log("RELEVANT METADATA: ")
-      // console.log(duration)
-      // console.log(fileExtension)
-      // console.log(date)
-      // console.log(uploadtime)
-      // console.log(size)
-      // console.log(latitude)
-      // console.log(longitude)
-
-      // filepath = assets.uri;
-      // metadata.duration = duration;
-      // metadata.fileExtension = fileExtension;
-      // metadata.date = date;
-      // uploadTime = uploadtime;
-      // metadata.size = size;
-      // metadata.latitude = latitude;
-      // metadata.longitude = longitude;
-      setMetadata({duration: duration, fileExtension:fileExtension, date:date, latitude:latitude, longitude:longitude, size:size});
-      setUploadTime(uploadtime);
-      setUploader(userinfo.userID);
-      setUserPass(userinfo.password);
-      console.log("New uploader: ", uploader)
-      setFilepath(assets.uri.substring(assets.uri.lastIndexOf('/') + 1));
-
-
-      function delay(time) {
-          return new Promise(resolve => setTimeout(resolve, time));
-        }
-        
-      //delay(1000).then(() => console.log('after delay'));
-
-      console.log(metadata);
-      console.log("Filepath: ", filepath);
-      console.log("Upload Time: ", uploadTime);
-      console.log("Uploader: ", uploader);
-
-      const source = {uri: assets.uri}
-      console.log(source);
-      setImage(source);
-
-      if (doesNotExist(latitude)) {
-        setLatitudeDialogVisible(true);
-      }
-      else if (doesNotExist(longitude)) {
-        setLongitudeDialogVisible(true);
-      }
-      else if (doesNotExist(date)) {
-        setDateDialogVisible(true);
-      }
-
-
-    }
-
-    function runPromise(func){
-      return new Promise((resolve, reject) => {
-        resolve(func());
-      })
-    }
-
-    const uploadImage = async () => {
-      setUploading(true);
-      Alert.alert("Your upload is being processed. Please do not close out of the app until the upload is complete. You may move onto other tasks while it is running.");
-      setImage(null); 
-      setUploadName("");
-      const response = await fetch(image.uri);
-      const blob = await response.blob();
-      const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
-      var ref = firebase.storage().ref().child(filename).put(blob);
-
-      try {
-          await ref;
-          console.log("ref: " + ref.snapshot);
-
-          
-          // await storageRef;
-      } catch (e) {
-          console.log(e);
-      }
-      try{
-          console.log(metadata);
-          console.log(filepath);
-          const mseconds = String(Date.now());
-          let name;
-          if(uploadName != ""){
-            name = String(uploadTime + "_" + uploadName);
-          }
-          else{
-            name = String(uploadTime + "_" + mseconds);
-          }
-            
-          
-          let weatherList;
-          if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
-            weatherList = await submitForWeather();
-          }
-          else{
-            weatherList = {};
-          }
-
-          
-          // setWeather(weatherList);
-          // setWeather(await submitForWeather(), async () => {
-          //     console.log("Weather: \n" + weather);
-          //     await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
-          //         uploadTime: uploadTime, uploader: uploader, 
-          //         weather: weather});
-          // });
-          await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
-              uploadTime: uploadTime, uploader: uploader, 
-              weather: weatherList});
-
-          const uid = String(userinfo.userID);
-          const docRef = doc(db, "Userinfo", uid);
-          const docSnap = await getDoc(docRef);
-          let count = 0;
-          
-          if (docSnap.exists()) {
-              console.log("Upload count (previous):", docSnap.data().uploadCount);
-              count = docSnap.data().uploadCount;
-          } else {
-          // doc.data() will be undefined in this case
-          }
-          //Update the uploaded document counter for user
-          await updateDoc(docRef, {
-              uploadCount: count + 1
-            });
-      }
-      catch(e){
-          console.log(e);
-          console.log(e.stack);
-      }
-      setUploading(false);
-      Alert.alert('Image/video upload successful!');
-  };
-
-
-  function isEmpty(obj) {
+    function isEmpty(obj) {
       return Object.keys(obj).length === 0;
-  }
-
-  function isNumeric(str) {
-      if (typeof str != "string") return false // we only process strings!  
-      return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-             !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
   }
 
   function delay(time) {
@@ -292,8 +53,6 @@ const UploadScreenCombined = () => {
         }, time);
       });
   }
-
-  const submitForWeather = async () => {
     // const latMin = latitude;
     // const latMax = latitude;
     // const longMin = longitude;
@@ -455,6 +214,244 @@ const UploadScreenCombined = () => {
     // console.log("11.3: weather:\n" + weather.join('\n'));
     return weatherLists;
 }
+
+
+const UploadScreenCombined = () => {
+    const { uploadState, setUploadState } = useContext(UploadContext);
+    const [image, setImage] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [metadata, setMetadata] = useState({})
+    const [uploadTime, setUploadTime] = useState('')
+    const [uploader, setUploader] = useState('')
+    const [filepath, setFilepath] = useState('')
+    const [userPass, setUserPass] = useState('')
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const [latitude, setLatitude] = useState(null);
+    const [longitude, setLongitude] = useState(null);
+    const [date, setDate] = useState(new Date(new Date().toLocaleDateString()));
+    const [uploadName, setUploadName] = useState("");
+
+    const [imageButtonVisible, setImageButtonVisible] = useState(false);
+    const [latitudeDialogVisible, setLatitudeDialogVisible] = useState(false);
+    const [longitudeDialogVisible, setLongitudeDialogVisible] = useState(false);
+    const [dateDialogVisible, setDateDialogVisible] = useState(false);
+    
+    const [toggleCheckBox, setToggleCheckBox] = useState(false);
+
+
+
+    useEffect(() => {
+      console.log("Latitude: " + metadata.latitude);
+      console.log("Longitude: " + metadata.longitude);
+      console.log("Date: " + metadata.date);
+      console.log("Checkbox: " + toggleCheckBox);
+      if (image) {
+        setImageButtonVisible(true);
+      }
+      else {
+        setImageButtonVisible(false);
+      }
+    }, [image, metadata, toggleCheckBox])
+
+    function doesNotExist(x) {
+      return (x == undefined || x == null || x == "NotFound" || x == "");
+    }
+
+    const pickImage = async () => {
+        // No permissions request is necessary for launching the image library
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.All,
+            allowsEditing: false,
+            aspect: [4, 3],
+            quality: 1,
+            exif:true
+        });
+        //console.log(result.assets);
+
+        pickImageCont(result);
+      }
+    
+    function pickImageCont(result) {
+
+      console.log("Value of uploading:::", uploadState);
+
+      /* METADATA */
+      console.log("Userid: ", userinfo.userID);
+      console.log("Email: ", userinfo.email);
+      console.log("Password: ", userinfo.password);
+      
+      const assets = result.assets[0]
+      console.log(assets)
+      const duration = assets.duration
+      let filExIndex = assets.uri.search(/\..*/);
+      const fileExtension = assets.uri.slice(filExIndex);
+      const uploadtime = new Date().toDateString();
+      const size = assets.fileSize;
+
+      let date;
+      let latitude;
+      let longitude;
+
+      if (assets.exif){
+          date = assets.exif.DateTimeOriginal;
+          latitude = assets.exif.GPSLatitude;
+          const latitudeSign = assets.exif.GPSLatitudeRef;
+          if (latitudeSign == 'S')
+              latitude = -latitude;
+          longitude = assets.exif.GPSLongitude;
+          const longitudeSign = assets.exif.GPSLongitudeRef;
+          if (longitudeSign == 'W')
+              longitude = -longitude;
+      }
+      else{
+        date = "NotFound";
+        latitude = "NotFound";
+        longitude = "NotFound";
+      }
+
+      // REACT NATIVE DIALOG ASKING FOR DATE
+      // REACT NATIVE DIALOG ASKING FOR LATITUDE
+      // REACT NATIVE DIALOG ASKING FOR LONGITUDE
+      console.log("latitude: " + latitude);
+      console.log("longitude: " + longitude);
+      console.log("date: " + date);
+      
+      console.log(assets)
+      console.log("RELEVANT METADATA: ")
+      // console.log(duration)
+      // console.log(fileExtension)
+      // console.log(date)
+      // console.log(uploadtime)
+      // console.log(size)
+      // console.log(latitude)
+      // console.log(longitude)
+
+      // filepath = assets.uri;
+      // metadata.duration = duration;
+      // metadata.fileExtension = fileExtension;
+      // metadata.date = date;
+      // uploadTime = uploadtime;
+      // metadata.size = size;
+      // metadata.latitude = latitude;
+      // metadata.longitude = longitude;
+      setMetadata({duration: duration, fileExtension:fileExtension, date:date, latitude:latitude, longitude:longitude, size:size});
+      setUploadTime(uploadtime);
+      setUploader(userinfo.userID);
+      setUserPass(userinfo.password);
+      console.log("New uploader: ", uploader)
+      setFilepath(assets.uri.substring(assets.uri.lastIndexOf('/') + 1));
+
+
+      function delay(time) {
+          return new Promise(resolve => setTimeout(resolve, time));
+        }
+        
+      //delay(1000).then(() => console.log('after delay'));
+
+      console.log(metadata);
+      console.log("Filepath: ", filepath);
+      console.log("Upload Time: ", uploadTime);
+      console.log("Uploader: ", uploader);
+
+      const source = {uri: assets.uri}
+      console.log(source);
+      setImage(source);
+
+      if (doesNotExist(latitude)) {
+        setLatitudeDialogVisible(true);
+      }
+      else if (doesNotExist(longitude)) {
+        setLongitudeDialogVisible(true);
+      }
+      else if (doesNotExist(date)) {
+        setDateDialogVisible(true);
+      }
+
+
+    }
+
+    function runPromise(func){
+      return new Promise((resolve, reject) => {
+        resolve(func());
+      })
+    }
+
+    const uploadImage = async () => {
+      setUploading(true);
+      Alert.alert("Your upload is being processed. Please do not close out of the app until the upload is complete. You may move onto other tasks while it is running.");
+      setImage(null); 
+      setUploadName("");
+      const response = await fetch(image.uri);
+      const blob = await response.blob();
+      const filename = image.uri.substring(image.uri.lastIndexOf('/') + 1);
+      var ref = firebase.storage().ref().child(filename).put(blob);
+
+      try {
+          await ref;
+          console.log("ref: " + ref.snapshot);
+
+          
+          // await storageRef;
+      } catch (e) {
+          console.log(e);
+      }
+      try{
+          console.log(metadata);
+          console.log(filepath);
+          const mseconds = String(Date.now());
+          let name;
+          if(uploadName != ""){
+            name = String(uploadTime + "_" + uploadName);
+          }
+          else{
+            name = String(uploadTime + "_" + mseconds);
+          }
+            
+          
+          let weatherList;
+          if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
+            weatherList = await submitForWeather(metadata);
+          }
+          else{
+            weatherList = {};
+          }
+
+          
+          // setWeather(weatherList);
+          // setWeather(await submitForWeather(), async () => {
+          //     console.log("Weather: \n" + weather);
+          //     await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
+          //         uploadTime: uploadTime, uploader: uploader, 
+          //         weather: weather});
+          // });
+          await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
+              uploadTime: uploadTime, uploader: uploader, 
+              weather: weatherList});
+
+          const uid = String(userinfo.userID);
+          const docRef = doc(db, "Userinfo", uid);
+          const docSnap = await getDoc(docRef);
+          let count = 0;
+          
+          if (docSnap.exists()) {
+              console.log("Upload count (previous):", docSnap.data().uploadCount);
+              count = docSnap.data().uploadCount;
+          } else {
+          // doc.data() will be undefined in this case
+          }
+          //Update the uploaded document counter for user
+          await updateDoc(docRef, {
+              uploadCount: count + 1
+            });
+      }
+      catch(e){
+          console.log(e);
+          console.log(e.stack);
+      }
+      setUploading(false);
+      Alert.alert('Image/video upload successful!');
+  };
+
 
   const latitudeChanged = (text) => {
     if (isNumeric(text)) {
@@ -736,3 +733,4 @@ const styles = StyleSheet.create({
   });
   
   export default UploadScreenCombined;
+  export {submitForWeather};
