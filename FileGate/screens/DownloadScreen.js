@@ -9,7 +9,7 @@ import {userinfo} from './LoginScreen'
 import {getStorage, ref, getDownloadURL, deleteObject} from 'firebase/storage'
 import { ScrollView } from 'react-native';
 import { submitForWeather } from './UploadScreenCombined';
-
+import Search from './Search'
 
 
 ``
@@ -31,6 +31,8 @@ const DownloadScreen = () => {
     const [nameView, setNameView] = useState("");
     const [imageMap, setImageMap] = useState({});
     const [weatherDataChanged, setWeatherDataChanged] = useState(false);
+    const [searching, setSearching] = useState(false);
+    const [filterStr, setFilterStr] = useState("");
 
 
     const onRefresh = useCallback(() => {
@@ -292,6 +294,7 @@ const DownloadScreen = () => {
                 onPress={downloadImage}>
                 <Text style={styles.buttonText}>See Your Images!</Text>
               </TouchableOpacity>
+            <Search setFilter={setFilterStr} setSearching={setSearching}></Search>
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
                 <View style={styles.metaViewContainer}>
                     {nameView != "" && <Text style={styles.imageName}>{nameView}</Text>}
