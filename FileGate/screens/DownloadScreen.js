@@ -295,7 +295,7 @@ const DownloadScreen = () => {
             {/* {(metaView != null) ? Object.keys(metaView).forEach((key) => {console.log("key: ", key);return <TextInput key={key} style={styles.input} value={String(key) + " : "+ String(metaView[key])}></TextInput>}) : null} */}
                 <View style={styles.metaViewContainer}>
                     {nameView != "" && <Text style={styles.imageName}>{nameView}</Text>}
-                    {(metaView != null && (userinfo.admin || (downloadCount == userinfo.uploadCount))) && Object.keys(metaView).map(key => 
+                    {(clickedImage && metaView != null) && Object.keys(metaView).map(key => 
                         <View>
                         <Text>{key}:</Text>
                         {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
