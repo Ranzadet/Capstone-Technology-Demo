@@ -176,8 +176,8 @@ import { UploadContext } from './UploadContext';
         }
         variance += 0.0050;
         if (variance > varianceLimit){
-          console.log("Variance limit reached. Breaking loop.")
-          break;
+          console.log("Variance limit reached. Breaking loop.");
+          throw new Error("Variance limit reached. Breaking loop. Date was: "+formattedDate+". Latitude was: "+lat+". Longitude was: "+long+".");
         }
         console.log("6: variance updated");
     }
@@ -472,7 +472,9 @@ const UploadScreenCombined = () => {
       }
       else{
         Alert.alert("Could not upload Image/Video: "+failReason+" Uploading error logs to database.");
-        await setDoc(doc(db, "errorLogs", name), {uploadTime:uploadTime, error:failLog});
+        var today = new Date();
+        const failTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        await setDoc(doc(db, "errorLogs", name), {uploadTime:uploadTime+" "+failTime, error:failLog});
       }
 
   };
