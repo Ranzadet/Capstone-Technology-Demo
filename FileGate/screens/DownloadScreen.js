@@ -298,12 +298,14 @@ const DownloadScreen = () => {
                     {(clickedImage && metaView != null) && Object.keys(metaView).map(key => 
                         <View>
                         <Text>{key}:</Text>
-                        {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])} 
+                        {typeof metaView[key] != 'object' ? <TextInput key={key} style={styles.input} defaultValue={String(metaView[key])}
+                        editable={false} 
                         onSubmitEditing={(value) => {textChangeMeta(value.nativeEvent.text, key)}}></TextInput>
                         : Object.keys(metaView[key]).map(subObj => 
                             <View>
                                 <Text>{subObj}</Text>
                             <TextInput key={subObj} style={styles.input} defaultValue={String(metaView[key][subObj])} 
+                            editable={subObj === "latitude" || subObj === "longitude" || subObj === "date"}
                             onSubmitEditing={(value) => {textChangeSub(value.nativeEvent.text, key, subObj)}}></TextInput>
                             </View>
                         )}
