@@ -45,7 +45,7 @@ const HomeScreen = (props) => {
   return (
     <View style={styles.container}>
     <View style={styles.header}>
-    <Text style={styles.logo}> FileGate </Text>
+    <Text style={styles.logo}> BirdBase </Text>
     </View>
     <Text style={styles.email}>Welcome, {userEmail}!</Text>
     {uploadState === 1 && <Text>Upload In progress!</Text>}

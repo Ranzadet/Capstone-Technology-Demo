@@ -91,7 +91,7 @@ const LoginScreen = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.text}>Welcome to FileGate</Text>
+            <Text style={styles.text}>Welcome to BirdBase</Text>
             <FormInput
                 value={email}
                 placeholderText='Email'

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image, RefreshControl, Pressable, FlatList, TextInput } from 'react-native'
+import { Button, View, Text, StyleSheet, TouchableOpacity, SafeAreaView, Alert, Image, RefreshControl, Pressable, FlatList, TextInput } from 'react-native'
 import React, { useState, useCallback } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import { firebase } from '../config'
@@ -9,7 +9,7 @@ import {userinfo} from './LoginScreen'
 import {getStorage, ref, getDownloadURL, deleteObject} from 'firebase/storage'
 import { ScrollView } from 'react-native';
 import { submitForWeather } from './UploadScreenCombined';
-
+import RNDateTimePicker from '@react-native-community/datetimepicker'
 
 
 ``
@@ -31,7 +31,12 @@ const DownloadScreen = () => {
     const [nameView, setNameView] = useState("");
     const [imageMap, setImageMap] = useState({});
     const [weatherDataChanged, setWeatherDataChanged] = useState(false);
+    const [date, setDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
+    const showDatePickerModal = () => {
+        setShowDatePicker(true);
+      };
 
     const onRefresh = useCallback(() => {
       setRefreshing(true);
@@ -250,6 +255,12 @@ const DownloadScreen = () => {
             }
         }
     }
+
+    function isNumeric(str) {
+        if (typeof str != "string") return false // we only process strings!  
+        return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+               !isNaN(parseFloat(str)) // ...and ensure strings of whitespace fail
+    }
     
     const textChangeSub = (text, key, subObj)=> {
         console.log("Text is changing!: ", text);
@@ -265,9 +276,25 @@ const DownloadScreen = () => {
                     console.log(subObj);
                     if (subObj === "latitude" || subObj === "longitude" || subObj === "date"){
                         if(subObj !== "date"){
-                            bigObj[subObj] = Number(text);
+                            if (isNumeric(text)) {
+                                if (subObj === "latitude" && (Number(text) < -90 || Number(text) > 90)) {
+                                    Alert.alert("Please enter only latitude values that are between -90 and 90.")
+                                }
+                                else if (subObj === "longitude" && (Number(text) < -180 || Number(text) > 180)) {
+                                    Alert.alert("Please enter only longitude values that are between -180 and 180.")
+                                }
+                                else {
+                                    bigObj[subObj] = Number(text);
+                                    setWeatherDataChanged(true);
+                                }
+                            }
+                            else {
+                                Alert.alert("Please enter only numeric values for latitudes and longitudes.")
+                            }
                         }
-                        setWeatherDataChanged(true);
+                        else {
+                            setWeatherDataChanged(true);
+                        }
                         console.log("weather data changed! : ", Object.keys(metaView)[i]);
                     }
                     // helpInput[Object.keys(helpInput)[i]] = text;
@@ -277,7 +304,26 @@ const DownloadScreen = () => {
         }
     }
 
+    function reformatDate(dateString) {
+        const [datePart, timePart] = dateString.split(" ");
+        const [year, month, day] = datePart.split(":").map(Number);
+        const [hours, minutes, seconds] = timePart.split(":").map(Number);
 
+        const dateObject = new Date(year, month - 1, day, hours, minutes, seconds);
+        console.log(dateObject);
+        return dateObject;
+    }
+
+    const formatDateString = (selectedDate) => {
+        const year = selectedDate.getFullYear();
+        const month = String(selectedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(selectedDate.getDate()).padStart(2, '0');
+        const hours = String(selectedDate.getHours()).padStart(2, '0');
+        const minutes = String(selectedDate.getMinutes()).padStart(2, '0');
+        const seconds = String(selectedDate.getSeconds()).padStart(2, '0');
+        
+        return `${year}:${month}:${day} ${hours}:${minutes}:${seconds}`;
+    };
     
     return (
         <SafeAreaView style={styles.container}>
@@ -304,8 +350,23 @@ const DownloadScreen = () => {
                         : Object.keys(metaView[key]).map(subObj => 
                             <View>
                                 <Text>{subObj}</Text>
+                            {subObj === "date" ? (
+                            showDatePicker ? (
+                            <RNDateTimePicker 
+                                value={reformatDate(String(metaView[key][subObj]))}
+                                mode="date"
+                                onChange={(event, selectedDate) => {
+                                    if (selectedDate !== undefined) {
+                                        setDate(selectedDate);
+                                        const formattedDate = formatDateString(selectedDate);
+                                        textChangeSub(formattedDate, key, subObj);
+                                    }
+                                    setShowDatePicker(false);
+                                }}
+                            />) :
+                            <Button title="Select Date" onPress={showDatePickerModal} />) : null}
                             <TextInput key={subObj} style={styles.input} defaultValue={String(metaView[key][subObj])} 
-                            editable={subObj === "latitude" || subObj === "longitude" || subObj === "date"}
+                            editable={subObj === "latitude" || subObj === "longitude"}
                             onSubmitEditing={(value) => {textChangeSub(value.nativeEvent.text, key, subObj)}}></TextInput>
                             </View>
                         )}
