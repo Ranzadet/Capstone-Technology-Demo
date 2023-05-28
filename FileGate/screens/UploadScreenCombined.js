@@ -60,6 +60,7 @@ import { UploadContext } from './UploadContext';
     const lat = metadata.latitude;
     const long = metadata.longitude;
     let variance = 0;
+    let varianceLimit = .2; //arbitrary number. Every .005 variance is equivalent to 1 loop iteration.
     // console.log("lat: " + String(lat));
     // console.log("long: " + String(long));
     // console.log("lat: " + typeof lat);
@@ -174,6 +175,10 @@ import { UploadContext } from './UploadContext';
 
         }
         variance += 0.0050;
+        if (variance > varianceLimit){
+          console.log("Variance limit reached. Breaking loop.");
+          throw new Error("Variance limit reached. Breaking loop. Date was: "+formattedDate+". Latitude was: "+lat+". Longitude was: "+long+".");
+        }
         console.log("6: variance updated");
     }
 
@@ -377,6 +382,11 @@ const UploadScreenCombined = () => {
     }
 
     const uploadImage = async () => {
+      let weatherSuccess = true;
+      let failReason = "";
+      let name;
+      let weatherList;
+      let failLog = "";
       setUploading(true);
       Alert.alert("Your upload is being processed. Please do not close out of the app until the upload is complete. You may move onto other tasks while it is running.");
       setImage(null); 
@@ -389,17 +399,17 @@ const UploadScreenCombined = () => {
       try {
           await ref;
           console.log("ref: " + ref.snapshot);
-
-          
           // await storageRef;
       } catch (e) {
           console.log(e);
+          weatherSuccess = false;
+          failLog = String(e);
+          failReason = "Error in uploading document to storage."
       }
       try{
           console.log(metadata);
           console.log(filepath);
           const mseconds = String(Date.now());
-          let name;
           if(uploadName != ""){
             name = String(uploadTime + "_" + uploadName);
           }
@@ -408,7 +418,6 @@ const UploadScreenCombined = () => {
           }
             
           
-          let weatherList;
           if(metadata.date != "NotFound" && !toggleCheckBox){ // add another condition: run weatherless
             weatherList = await submitForWeather(metadata);
           }
@@ -416,14 +425,18 @@ const UploadScreenCombined = () => {
             weatherList = {};
           }
 
-          
-          // setWeather(weatherList);
-          // setWeather(await submitForWeather(), async () => {
-          //     console.log("Weather: \n" + weather);
-          //     await setDoc(doc(db, "fdu-birds-2", name), {filepath: filepath, metadata: metadata, 
-          //         uploadTime: uploadTime, uploader: uploader, 
-          //         weather: weather});
-          // });
+        }
+        catch(e){
+          if(weatherSuccess){
+            console.log(e);
+            console.log(e.stack);
+            failLog = String(e);
+            weatherSuccess = false;
+            failReason = "Weather algorithm failure."
+          }
+        }
+
+        try{
           await setDoc(doc(db, "fdu-birds", name), {filepath: filepath, metadata: metadata, 
               uploadTime: uploadTime, uploader: uploader, 
               weather: weatherList});
@@ -445,11 +458,25 @@ const UploadScreenCombined = () => {
             });
       }
       catch(e){
+        if(weatherSuccess){
           console.log(e);
           console.log(e.stack);
+          weatherSuccess = false;
+          failLog = String(e);
+          failReason = "Error in uploading metadata."
+        }
       }
       setUploading(false);
-      Alert.alert('Image/video upload successful!');
+      if(weatherSuccess){
+        Alert.alert('Image/video upload successful!');
+      }
+      else{
+        Alert.alert("Could not upload Image/Video: "+failReason+" Uploading error logs to database.");
+        var today = new Date();
+        const failTime = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+        await setDoc(doc(db, "errorLogs", name), {uploadTime:uploadTime+" "+failTime, error:failLog});
+      }
+
   };
 
 
