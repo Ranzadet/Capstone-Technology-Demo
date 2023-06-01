@@ -242,8 +242,11 @@ const UploadScreenCombined = () => {
     const [dateDialogVisible, setDateDialogVisible] = useState(false);
     
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
-
+    const showDatePickerModal = () => {
+        setShowDatePicker(true);
+      };
 
     useEffect(() => {
       console.log("Latitude: " + metadata.latitude);
@@ -299,6 +302,7 @@ const UploadScreenCombined = () => {
 
       if (assets.exif){
           date = assets.exif.DateTimeOriginal;
+          // date = "NotFound";
           latitude = assets.exif.GPSLatitude;
           const latitudeSign = assets.exif.GPSLatitudeRef;
           if (latitudeSign == 'S')
@@ -505,6 +509,14 @@ const UploadScreenCombined = () => {
   const dateChanged = (event, dateChoice) => {
     console.log(dateChoice);
     setDate(dateChoice);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    const seconds = String(date.getSeconds()).padStart(2, "0");
+
+    dateChoice = `${year}:${month}:${day} ${hours}:${minutes}:${seconds}`;
     setMetadata({...metadata, date: dateChoice});
   }
 
@@ -543,6 +555,23 @@ const UploadScreenCombined = () => {
   //   const checked = toggleCheckBox;
   //   setToggleCheckBox(!checked);
   // }
+
+  function formatDate(dateChoice) {
+    if (doesNotExist(dateChoice)) {
+      return "Not chosen";
+    }
+    dateChoice = new Date(dateChoice);
+    const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const monthsOfYear = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const day = daysOfWeek[date.getDay()];
+    const month = monthsOfYear[date.getMonth()];
+    const dateStr = date.getDate();
+    const year = date.getFullYear();
+
+    const formattedDate = `${day}. ${month} ${dateStr}, ${year}`;
+    return formattedDate;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -637,6 +666,16 @@ const UploadScreenCombined = () => {
               value={latitude}
               onChangeText={latitudeChanged}
               style={styles.imagePickerButtonText}
+              onSubmitEditing={(value) => {
+                if (isNumeric(value.nativeEvent.text)) {
+                  if (Number(value.nativeEvent.text) < -90 || Number(value.nativeEvent.text) > 90) {
+                    Alert.alert("Please enter only latitude values that are between -90 and 90.")
+                  }
+                }
+                else {
+                  Alert.alert("Please enter only numeric values for latitudes.")
+                }
+              }}
             />
           </View>
       </ConfirmDialog>
@@ -655,6 +694,16 @@ const UploadScreenCombined = () => {
               value={longitude}
               onChangeText={longitudeChanged}
               style={styles.imagePickerButtonText}
+              onSubmitEditing={(value) => {
+                if (isNumeric(value.nativeEvent.text)) {
+                  if (Number(value.nativeEvent.text) < -180 || Number(value.nativeEvent.text) > 180) {
+                    Alert.alert("Please enter only longitude values that are between -180 and 180.")
+                  }
+                }
+                else {
+                  Alert.alert("Please enter only numeric values for longitudes.")
+                }
+              }}
             />
           </View>
       </ConfirmDialog>
@@ -667,13 +716,20 @@ const UploadScreenCombined = () => {
           title: "Submit",
           onPress: () => fixDate()
         }}>
-          <View>
-            <RNDateTimePicker 
-              value={date}
-              mode="date"
-              onChange={dateChanged}
-            />
-          </View>
+        <View>
+          {showDatePicker ? (
+          <RNDateTimePicker 
+            value={new Date()}
+            mode="date"
+            onChange={(event, selectedDate) => {
+              if (selectedDate !== undefined) {
+                dateChanged(event, selectedDate);
+              }
+              setShowDatePicker(false);
+            }}
+            />) : <Button title="Select Date" onPress={showDatePickerModal} />}
+          <Text>Date Selected: {formatDate(metadata.date)}</Text>
+        </View>
       </ConfirmDialog>
     </SafeAreaView>
   );
@@ -685,7 +741,6 @@ const styles = StyleSheet.create({
   flex: 1,
   backgroundColor: '#fff',
   alignItems: 'center',
-  justifyContent: 'top',
   },
   input: {
     borderWidth: 1,
