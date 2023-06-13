@@ -15,17 +15,17 @@ INSTRUCTIONS TO INSTALL THE APPLICATION IN ITS CURRENT STATE ON ANDROID DEVICES 
 12. If you wish to disable the "Unknown sources" option after installing the APK, you can go back to the "Security" or "Privacy" settings and toggle it off for security reasons.
 
 HOW TO DOWNLOAD ON ANDROID EMULATOR ON COMPUTER
-1. Install the .apk
-2. Drag and drop into emulator
-3. Enjoy
+1. Install the APK file onto your computer.
+2. Open any Android emulator. Free Android emulators can be found in applications such as Android Studio and BlueStacks.
+3. Open your computer's File Manager. Locate the APK file.
+4. Drag and drop the APK into emulator. The APK should automatically install into the emulator.
 
-HOW TO CODE THIS?
-1. Use your favorite IDE
-2. Download files from github
-3. Download Node 
-4. Get all packages with npm install
+HOW TO EDIT THIS CODE
+1. Import the files from this repository to your IDE
+2. Download Node 
+3. Get all packages by using 'npm install' in your terminal
 
-HOW TO TEST?
-1. Download expo go on the app store on your mobile device
-2. Scan the code after typing npx expo start through the app
-3. Must be connected to same network, unless you use tunneling
+HOW TO TEST
+1. Download Expo Go on the app store on your mobile device
+2. Navigate to the FileGate folder in your terminal
+3. With your phone, scan the QR code that appears after typing 'npx expo start' in your terminal. Make sure your phone is connected to the same network as the device that has the terminal running.
